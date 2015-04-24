@@ -2,7 +2,7 @@
     
     // Favicon function
     function pandora_favicon() { ?>
-        <link rel="shortcut icon" href="<?php echo bloginfo('stylesheet_directory') ?>/assets/images/favicon.ico" />
+        <link rel="shortcut icon" href="<?php echo bloginfo('stylesheet_directory') ?>/assets/images/favicon.png" />
     <?php }
     add_action('wp_head', 'pandora_favicon');
 
