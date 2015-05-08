@@ -13,6 +13,18 @@ $fontsize = 16
 font-size($fontValue = $fontsize, $baseFontValue = $fontsize)
     font-size   $fontValue px
     font-size   ($fontValue / $baseFontValue) rem
+
+// Placeholder color
+placeholder()
+    &::-webkit-input-placeholder
+        {block}
+    &:-moz-placeholder
+        {block}
+    &::-moz-placeholder
+        {block}
+    &:-ms-input-placeholder
+        {block}
+
 // End of mixins
 
 // Variables
