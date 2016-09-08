@@ -14,6 +14,22 @@ font-size($fontValue = $fontsize, $baseFontValue = $fontsize)
     font-size   $fontValue px
     font-size   ($fontValue / $baseFontValue) rem
 
+// Center Object function.
+centerObject($horizontal = true, $vertical = true)
+    if $horizontal and $vertical
+        top 50%
+        left 50%
+        position absolute
+        transform translate(-50%, -50%)
+    else if $horizontal
+        left 50%
+        position absolute
+        transform translateX(-50%)
+    else if $vertical
+        top 50%
+        position absolute
+        transform translateY(-50%)
+
 // Placeholder color
 placeholder()
     &::-webkit-input-placeholder
