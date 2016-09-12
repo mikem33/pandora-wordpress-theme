@@ -1,4 +1,4 @@
-<?php
+ <?php
     
     // Favicon function
     function pandora_favicon() { ?>
@@ -78,6 +78,10 @@
             $arr[] = 'page__404';   
         }
 
+        if (is_user_logged_in()) {
+            $arr[] = 'logged-in';
+        }
+        
         return $arr;  
     }
 
