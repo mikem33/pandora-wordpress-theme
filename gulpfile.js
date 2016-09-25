@@ -9,7 +9,7 @@ var gulp            = require('gulp'),
     rename          = require('gulp-rename'),
     notify          = require('gulp-notify');
 
-gulp.task('styles', function(){
+gulp.task('styles-build', function(){
     gulp.src('wp-content/themes/pandora-wordpress-theme/assets/css/styl/main.styl')
         .pipe(stylus({compress: false, use: nib(), paths: ['wp-content/themes/pandora-wordpress-theme/assets/css/styl']}))
             //.pipe(minifyCSS({keepSpecialComments : 1})) This is not working at the moment...
@@ -18,6 +18,20 @@ gulp.task('styles', function(){
             .pipe(gulp.dest(''))
 });
 
-gulp.task('watch', function(){
+// The -dev suffix is for development purposes.
+gulp.task('styles-dev', function(){
+    gulp.src('assets/css/styl/main.styl')
+        .pipe(stylus({compress: false, use: nib(), paths: ['assets/css/styl']}))
+            //.pipe(minifyCSS({keepSpecialComments : 1})) This is not working at the moment...
+            .pipe(rename('style.css'))
+            .pipe(notify('Compiled!'))
+            .pipe(gulp.dest(''))
+});
+
+gulp.task('watch-dev', function(){
+    gulp.watch('assets/css/styl/*.styl', ['styles']);
+});
+
+gulp.task('watch-build', function(){
     gulp.watch('wp-content/themes/pandora-wordpress-theme/assets/css/styl/*.styl', ['styles']);
 });
