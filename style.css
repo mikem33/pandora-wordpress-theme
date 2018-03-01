@@ -451,7 +451,7 @@ textarea {
   padding: 0.2em 0;
 }
 body {
-  font-weight: 300;
+  font-weight: 400;
 }
 p {
   font-size: 16px;
@@ -505,6 +505,9 @@ strong {
   max-width: 1280px;
   position: relative;
 }
+.row {
+  width: 100%;
+}
 .half {
   width: 50%;
 }
@@ -513,6 +516,57 @@ strong {
 }
 .right {
   float: right;
+}
+.align {
+  width: 100%;
+  height: 100%;
+  display: table;
+}
+.align > div {
+  display: table-cell;
+  vertical-align: middle;
+}
+.flex {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-lines: multiple;
+  -moz-box-lines: multiple;
+  -o-box-lines: multiple;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.flex.no-wrap > .post {
+  width: 100%;
+}
+.nondisplayed {
+  display: none;
+}
+.hidden {
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  visibility: hidden;
+  -webkit-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -ms-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+.shown {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  visibility: visible;
+  -webkit-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  -ms-transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
 }
 .clearfix {
   zoom: 1;
@@ -524,6 +578,33 @@ strong {
 }
 .clearfix:after {
   clear: both;
+}
+img.alignright {
+  float: right;
+  margin: 0 0 1em 1em;
+}
+img.alignleft {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+img.aligncenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+}
+a img.alignright {
+  float: right;
+  margin: 0 0 1em 1em;
+}
+a img.alignleft {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+a img.aligncenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 @media print {
   * {

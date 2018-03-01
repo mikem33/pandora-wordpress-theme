@@ -14,7 +14,7 @@ font-size($fontValue = $fontsize, $baseFontValue = $fontsize)
     font-size   $fontValue px
     font-size   ($fontValue / $baseFontValue) rem
 
-// Center Object function.
+// Center Object functions.
 centerObject($horizontal = true, $vertical = true)
     if $horizontal and $vertical
         top 50%
@@ -29,6 +29,15 @@ centerObject($horizontal = true, $vertical = true)
         top 50%
         position absolute
         transform translateY(-50%)
+        
+centerObjectFlex($both = true, $vertical = true)
+    display flex
+    if $both
+        align-items center
+        justify-content center    
+    else if $both == false and $vertical
+        flex-direction column
+        justify-content center
 
 // Placeholder color
 placeholder()
@@ -104,7 +113,6 @@ textarea
     color #000
     padding 0.2em 0
 
-
 /* ---------------------------- *\
     
     $Author's custom $Styles
@@ -112,10 +120,9 @@ textarea
 \*----------------------------- */
 
 body
-    font-weight 300
+    font-weight 400
  
 /* Declarating general styles for p and h$ */
-
 p
     font-size(16)
 h1, h2, h3, h4, h5, h6, p
@@ -141,6 +148,9 @@ strong
     max-width 1280px
     position relative
       
+.row
+    width 100%
+      
 .half
     width 50%
 
@@ -150,5 +160,62 @@ strong
 .right
     float right
 
+.align
+    width 100%
+    height 100%
+    display table
+    > div
+        display table-cell
+        vertical-align middle
+
+.flex
+    display flex
+    flex-wrap wrap
+    &.no-wrap > .post
+        width 100%
+
+.flex-centering
+    centerFlexbox(true,true)
+
+.nondisplayed
+    display none
+
+.hidden
+    opacity 0
+    visibility hidden
+    transition opacity .3s ease-out, visibility .3s ease-out
+
+.shown
+    opacity 1
+    visibility visible
+    transition opacity .3s ease-out, visibility .3s ease-out
+
 .clearfix
     clearfix()
+
+/* Predefined styles for post and page images (floats and margins) */
+img
+    &.alignright 
+        float right
+        margin 0 0 1em 1em
+    &.alignleft 
+        float left 
+        margin 0 1em 1em 0
+    &.aligncenter 
+        display block
+        margin-left auto
+        margin-right auto
+        padding 10px
+    a &
+        &.alignright
+            float right
+            margin 0 0 1em 1em
+    a &
+        &.alignleft
+            float left
+            margin 0 1em 1em 0
+    a &
+        &.aligncenter
+            display block
+            margin-left auto
+            margin-right auto
