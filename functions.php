@@ -35,9 +35,9 @@
     
     if (function_exists('register_sidebar')) {
         register_sidebar(array(
-            'name' => __('Sidebar Widgets','pandora' ),
+            'name' => __('Sidebar Widgets','pandora'),
             'id'   => 'sidebar-widgets',
-            'description'   => __( 'These are widgets for the sidebar.','pandora' ),
+            'description'   => __( 'These are widgets for the sidebar.','pandora'),
             'before_widget' => '<div id="%1$s" class="widget %2$s">',
             'after_widget'  => '</div>',
             'before_title'  => '<h2>',
@@ -93,8 +93,8 @@
     function register_my_menus() {
         register_nav_menus(
             array(
-              'header-menu' => __( 'Header Menu' ),
-              'extra-menu' => __( 'Extra Menu' )
+              'header-menu' => __('Header Menu', 'pandora'),
+              'extra-menu' => __('Extra Menu', 'pandora')
             )
         );
     }
