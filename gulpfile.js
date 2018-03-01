@@ -3,26 +3,22 @@
 
 var gulp            = require('gulp'),
     nib             = require('nib'),
-    gulpif          = require('gulp-if'),
     stylus          = require('gulp-stylus'),
-    minifyCSS       = require('gulp-clean-css'),
     rename          = require('gulp-rename'),
     notify          = require('gulp-notify');
 
-gulp.task('styles-build', function(){
+gulp.task('styles', function(){
     gulp.src('wp-content/themes/pandora-wordpress-theme/assets/css/styl/main.styl')
         .pipe(stylus({compress: false, use: nib(), paths: ['wp-content/themes/pandora-wordpress-theme/assets/css/styl']}))
-            //.pipe(minifyCSS({keepSpecialComments : 1})) This is not working at the moment...
             .pipe(rename('wp-content/themes/pandora-wordpress-theme/style.css'))
             .pipe(notify('Compiled!'))
             .pipe(gulp.dest(''))
 });
 
-// The -dev suffix is for development purposes.
+// The -dev suffix is for development purposes. If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/main.styl')
         .pipe(stylus({compress: false, use: nib(), paths: ['assets/css/styl']}))
-            //.pipe(minifyCSS({keepSpecialComments : 1})) This is not working at the moment...
             .pipe(rename('style.css'))
             .pipe(notify('Compiled!'))
             .pipe(gulp.dest(''))
@@ -32,6 +28,6 @@ gulp.task('watch-dev', function(){
     gulp.watch('assets/css/styl/*.styl', ['styles']);
 });
 
-gulp.task('watch-build', function(){
+gulp.task('watch', function(){
     gulp.watch('wp-content/themes/pandora-wordpress-theme/assets/css/styl/*.styl', ['styles']);
 });

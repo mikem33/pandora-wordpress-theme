@@ -13,14 +13,12 @@
   "author": "Miguel Morera",
   "license": "ISC",
   "homepage": "https://bitbucket.org/miguelmorera/pandora-wordpress-theme#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "gulp": "^3.9.1",
     "nib": "^1.1.2",
     "gulp-notify": "^2.2.0",
     "gulp-stylus": "^2.5.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-clean-css": "^2.0.12",
-    "gulp-if": "^2.0.1"
-  },
-  "devDependencies": {}
+    "gulp-rename": "^1.2.2"
+  }
 }
