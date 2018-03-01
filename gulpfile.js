@@ -4,44 +4,46 @@
 // The theme slug variable.
 var themeSlug       = 'wp-content/themes/pandora-wordpress-theme/';
 
-var gulp            = require('gulp'),
+var fs              = require('fs'),
+    gulp            = require('gulp'),
     nib             = require('nib'),
     util            = require('gulp-util'),
     stylus          = require('gulp-stylus'),
     rename          = require('gulp-rename'),
     notify          = require('gulp-notify'),
     concat          = require('gulp-concat'),
-    uglify          = require('gulp-uglify'),    
+    uglify          = require('gulp-uglify'),
+    realFavicon     = require('gulp-real-favicon'),
     checktextdomain = require('gulp-checktextdomain');;
 
 gulp.task('styles', function(){
     gulp.src(themeSlug + 'assets/css/styl/main.styl')
         .pipe(stylus({
-                compress: false, 
-                use: nib(),
-                'include css': true,
-                paths: [themeSlug + 'assets/css/styl']
-            }))
-            .on('error', swallowError)
-            .pipe(rename(themeSlug + 'style.css'))
-            .pipe(notify('Compiled!'))
-            .pipe(gulp.dest(''))
+            compress: false, 
+            use: nib(),
+            'include css': true,
+            paths: [themeSlug + 'assets/css/styl']
+        }))
+        .on('error', swallowError)
+        .pipe(rename(themeSlug + 'style.css'))
+        .pipe(notify('Compiled!'))
+        .pipe(gulp.dest(''))
 });
 
 // The -dev suffix is for development purposes. If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/main.styl')
         .pipe(
-            stylus({
-                compress: false,
-                use: nib(),
-                'include css': true,
-                paths: ['assets/css/styl']
-            }))
-            .on('error', swallowError)
-            .pipe(rename('style.css'))
-            .pipe(notify('Compiled!'))
-            .pipe(gulp.dest(''))
+        stylus({
+            compress: false,
+            use: nib(),
+            'include css': true,
+            paths: ['assets/css/styl']
+        }))
+        .on('error', swallowError)
+        .pipe(rename('style.css'))
+        .pipe(notify('Compiled!'))
+        .pipe(gulp.dest(''))
 });
 
 // Generate Javascript
@@ -139,6 +141,135 @@ gulp.task('checktextdomain-dev', function() {
         force: true,
         correct_domain: true
     }));
+});
+
+// File where the favicon markups are stored
+var FAVICON_DATA_FILE = 'faviconData.json';
+
+gulp.task('generate-favicon', function(done) {
+    realFavicon.generateFavicon({
+        masterPicture: themeSlug + 'assets/images/favicons/master-picture.png',
+        dest: themeSlug + 'assets/images/favicons',
+        iconsPath: themeSlug + '/assets/images/favicons/',
+        design: {
+            ios: {
+                pictureAspect: 'noChange',
+                assets: {
+                    ios6AndPriorIcons: false,
+                    ios7AndLaterIcons: false,
+                    precomposedIcons: false,
+                    declareOnlyDefaultIcon: true
+                }
+            },
+            desktopBrowser: {},
+            windows: {
+                pictureAspect: 'noChange',
+                backgroundColor: '#2b5797',
+                onConflict: 'override',
+                assets: {
+                    windows80Ie10Tile: false,
+                    windows10Ie11EdgeTiles: {
+                        small: false,
+                        medium: true,
+                        big: false,
+                        rectangle: false
+                    }
+                }
+            },
+            androidChrome: {
+                pictureAspect: 'noChange',
+                themeColor: '#ffffff',
+                manifest: {
+                    display: 'standalone',
+                    orientation: 'notSet',
+                    onConflict: 'override',
+                    declared: true
+                },
+                assets: {
+                    legacyIcon: false,
+                    lowResolutionIcons: false
+                }
+            },
+            safariPinnedTab: {
+                pictureAspect: 'blackAndWhite',
+                threshold: 50,
+                themeColor: '#5bbad5'
+            }
+        },
+        settings: {
+            scalingAlgorithm: 'Mitchell',
+            errorOnImageTooSmall: false,
+            readmeFile: false,
+            htmlCodeFile: false,
+            usePathAsIs: false
+        },
+        markupFile: FAVICON_DATA_FILE
+    }, function() {
+        done();
+    });
+});
+
+gulp.task('generate-favicon-dev', function(done) {
+    realFavicon.generateFavicon({
+        masterPicture: 'assets/images/favicons/favicon-master.png',
+        dest: 'assets/images/favicons',
+        iconsPath: '/assets/images/favicons/',
+        design: {
+            ios: {
+                pictureAspect: 'noChange',
+                assets: {
+                    ios6AndPriorIcons: false,
+                    ios7AndLaterIcons: false,
+                    precomposedIcons: false,
+                    declareOnlyDefaultIcon: true
+                }
+            },
+            desktopBrowser: {},
+            windows: {
+                pictureAspect: 'noChange',
+                backgroundColor: '#2b5797',
+                onConflict: 'override',
+                assets: {
+                    windows80Ie10Tile: false,
+                    windows10Ie11EdgeTiles: {
+                        small: false,
+                        medium: true,
+                        big: false,
+                        rectangle: false
+                    }
+                }
+            },
+            androidChrome: {
+                pictureAspect: 'noChange',
+                themeColor: '#ffffff',
+                manifest: {
+                    display: 'standalone',
+                    orientation: 'notSet',
+                    onConflict: 'override',
+                    declared: true
+                },
+                assets: {
+                    legacyIcon: false,
+                    lowResolutionIcons: false
+                }
+            },
+            safariPinnedTab: {
+                pictureAspect: 'blackAndWhite',
+                threshold: 50,
+                themeColor: '#5bbad5'
+            }
+        },
+        settings: {
+            scalingAlgorithm: 'Mitchell',
+            errorOnImageTooSmall: false,
+            readmeFile: false,
+            htmlCodeFile: false,
+            usePathAsIs: false
+        },
+        markupFile: FAVICON_DATA_FILE
+    }, function() {
+        done();
+    });
 });
 
 // Show errors on console.

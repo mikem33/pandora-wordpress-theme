@@ -19,6 +19,7 @@
     "gulp-checktextdomain": "^2.1.1",
     "gulp-concat": "^2.6.1",
     "gulp-notify": "^2.2.0",
+    "gulp-real-favicon": "^0.2.2",
     "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.5.0",
     "gulp-uglify": "^3.0.0",
