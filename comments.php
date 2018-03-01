@@ -1,4 +1,5 @@
-<?php // Do not delete these lines
+<?php 
+    // Do not delete these lines
     if (!empty($_SERVER['SCRIPT_FILENAME']) && 'comments.php' == basename($_SERVER['SCRIPT_FILENAME']))
         die ('Please do not load this page directly. Thanks!');
     if (!empty($post->post_password)) {
@@ -12,36 +13,36 @@
 
 <?php if ('open' == $post->comment_status) : ?>
 
-        <section class="comment-form">
-            <h3>Escribe un comentario</h3>
+    <section class="comment-form">
+        <h3>Escribe un comentario</h3>
 
-            <?php if (get_option('comment_registration') && !$user_ID) : ?>
-            <p>Debe <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>">registrarte</a> para dejar un comentario.</p>
+        <?php if (get_option('comment_registration') && !$user_ID) : ?>
+        <p>Debe <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>">registrarte</a> para dejar un comentario.</p>
+        <?php else : ?>
+
+        <form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
+
+            <?php if ($user_ID) : ?>
+            <p>Has iniciado sesión como <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?action=logout" title="Log out of this account">Log out &raquo;</a></p>
             <?php else : ?>
 
-            <form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
+            <input type="text" name="author" id="author" value="<?php echo $comment_author; ?>" size="55" tabindex="1" placeholder="Nombre*" <?php if ($req) echo "aria-required='true'"; ?>>
+            
+            <input type="text" name="email" id="email" value="<?php echo $comment_author_email; ?>" size="55" tabindex="2" placeholder="E-mail*" <?php if ($req) echo "aria-required='true'"; ?>>
+            
+            <input type="text" name="url" id="url" value="<?php echo $comment_author_url; ?>" size="55" tabindex="3" placeholder="Página Web">
 
-                <?php if ($user_ID) : ?>
-                <p>Has iniciado sesión como <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?action=logout" title="Log out of this account">Log out &raquo;</a></p>
-                <?php else : ?>
-
-                <input type="text" name="author" id="author" value="<?php echo $comment_author; ?>" size="55" tabindex="1" placeholder="Nombre*" <?php if ($req) echo "aria-required='true'"; ?>>
-                
-                <input type="text" name="email" id="email" value="<?php echo $comment_author_email; ?>" size="55" tabindex="2" placeholder="E-mail*" <?php if ($req) echo "aria-required='true'"; ?>>
-                
-                <input type="text" name="url" id="url" value="<?php echo $comment_author_url; ?>" size="55" tabindex="3" placeholder="Página Web">
-
-                <?php endif; ?>
-                <textarea name="comment" id="comment" cols="55" rows="10" tabindex="4" placeholder="Comentario*"></textarea>
-                <input name="submit" type="submit" id="submit" tabindex="5" value="Enviar comentario &rarr;">
-                <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>">
-                <?php do_action('comment_form', $post->ID); ?>
-                <p>Los campos marcados con un asterisco (*) son obligatorios.</p>
-
-            </form>
             <?php endif; ?>
+            <textarea name="comment" id="comment" cols="55" rows="10" tabindex="4" placeholder="Comentario*"></textarea>
+            <input name="submit" type="submit" id="submit" tabindex="5" value="Enviar comentario &rarr;">
+            <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>">
+            <?php do_action('comment_form', $post->ID); ?>
+            <p>Los campos marcados con un asterisco (*) son obligatorios.</p>
 
-        </section><!-- .comment-form -->
+        </form>
+        <?php endif; ?>
+
+    </section><!-- .comment-form -->
 <?php endif; ?>
 
 <?php if ($comments) : // there are comments ?>
@@ -87,7 +88,7 @@
 
      <?php else : ?>
         <!-- [comments are closed, and no comments] -->
-        <p>Los comentarios están cerrados.</p>
+        <p><?php _e('Los comentarios están cerrados.','pandora'); ?></p>
 
     <?php endif; ?>
 <?php endif; ?>

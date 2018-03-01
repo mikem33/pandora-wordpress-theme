@@ -1,31 +1,28 @@
 <?php get_header(); ?>
     <div class="wrapper">
-        <section class="container">
-            <header class="head-title">
+        <?php if (have_posts()) : ?>
+            <header>
+                <?php $post = $posts[0]; // hack: set $post so that the_date() works ?>
+                <?php if (is_category()) { ?>
+                <h1 class="page-title">Archivo de la Categoría &ldquo;<?php single_cat_title(); ?>&rdquo;</h1>
 
-                <?php if (have_posts()) : ?>
+                <?php } elseif(is_tag()) { ?>
+                <h1 class="page-title">Entradas etiquetadas con &ldquo;<?php single_tag_title(); ?>&rdquo;</h1>
 
-                    <?php $post = $posts[0]; // hack: set $post so that the_date() works ?>
-                    <?php if (is_category()) { ?>
-                    <h1 class="page-title">Archivo de la Categoría &ldquo;<?php single_cat_title(); ?>&rdquo;</h1>
+                <?php } elseif (is_day()) { ?>
+                <h1 class="page-title">Archivo de fecha <?php the_time('F jS, Y'); ?></h1>
 
-                    <?php } elseif(is_tag()) { ?>
-                    <h1 class="page-title">Entradas etiquetadas con &ldquo;<?php single_tag_title(); ?>&rdquo;</h1>
+                <?php } elseif (is_month()) { ?>
+                <h1 class="page-title">Archivo de <?php the_time('F, Y'); ?></h1>
 
-                    <?php } elseif (is_day()) { ?>
-                    <h1 class="page-title">Archivo de fecha <?php the_time('F jS, Y'); ?></h1>
+                <?php } elseif (is_year()) { ?>
+                <h1 class="page-title">Archivo del año <?php the_time('Y'); ?></h1>
 
-                    <?php } elseif (is_month()) { ?>
-                    <h1 class="page-title">Archivo de <?php the_time('F, Y'); ?></h1>
+                <?php } elseif (is_author()) { ?>
+                <h1 class="page-title">Archivo por Autor</h1>
 
-                    <?php } elseif (is_year()) { ?>
-                    <h1 class="page-title">Archivo del año <?php the_time('Y'); ?></h1>
-
-                    <?php } elseif (is_author()) { ?>
-                    <h1 class="page-title">Archivo por Autor</h1>
-
-                    <?php } elseif (isset($_GET['paged']) && !empty($_GET['paged'])) { ?>
-                    <h1 class="page-title">Archivos de Blog</h1>
+                <?php } elseif (isset($_GET['paged']) && !empty($_GET['paged'])) { ?>
+                <h1 class="page-title">Archivos de Blog</h1>
 
                 <?php } ?>
 
@@ -46,23 +43,21 @@
                     </footer>
                 </article>
 
-                <?php endwhile; ?>
+            <?php endwhile; ?>
 
-                <nav>
-                    <p><?php posts_nav_link('&nbsp;&bull;&nbsp;'); ?></p>
-                </nav>
+            <nav>
+                <p><?php posts_nav_link('&nbsp;&bull;&nbsp;'); ?></p>
+            </nav>
 
-                <?php else : ?>
+        <?php else : ?>
 
-                <article class="post">
-                    <h1>No se ha encontrado.</h1>
-                    <p>Lo sentimos, pero el recurso solicitado no se encuentra.</p>
-                    <?php get_search_form(); ?>
-                </article>
+            <article class="post">
+                <h1>No se ha encontrado.</h1>
+                <p>Lo sentimos, pero el recurso solicitado no se encuentra.</p>
+                <?php get_search_form(); ?>
+            </article>
 
-                <?php endif; ?>
-
-        </section><!-- .container -->
+        <?php endif; ?>
     </div><!-- .wrapper -->
     
 <?php get_footer(); ?>
