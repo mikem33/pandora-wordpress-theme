@@ -6,6 +6,10 @@
     <?php }
     add_action('wp_head', 'pandora_favicon');
 
+    // Remove Emoji Icons
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+
     function pandora_scripts(){
         // Set false if you want to load on the <head>.
         if (!is_admin()) {
@@ -31,9 +35,9 @@
     
     if (function_exists('register_sidebar')) {
         register_sidebar(array(
-            'name' => __('Sidebar Widgets','mminimal' ),
+            'name' => __('Sidebar Widgets','pandora' ),
             'id'   => 'sidebar-widgets',
-            'description'   => __( 'These are widgets for the sidebar.','mminimal' ),
+            'description'   => __( 'These are widgets for the sidebar.','pandora' ),
             'before_widget' => '<div id="%1$s" class="widget %2$s">',
             'after_widget'  => '</div>',
             'before_title'  => '<h2>',
@@ -110,11 +114,12 @@
     //add_filter('acf/settings/show_admin', '__return_false');
 
     // Disable auto-generated p on ACF WYSIWIG editor
-    function ptobr($string){
+    function ptobr($string) {
         return preg_replace("/<\/p>[^<]*<p>/", "<br /><br />", $string);}
 
-    function stripp($string){
-        return preg_replace('/(<p>|<\/p>)/i','',$string) ;}
+    function stripp($string) {
+        return preg_replace('/(<p>|<\/p>)/i','',$string) ;
+    }
 
     // Determine the text of the 'Read more'
     function my_more_link($more_link, $more_link_text) {
@@ -122,4 +127,4 @@
     }
     add_filter('the_content_more_link', 'my_more_link', 10, 2);
     
-    ?>
+?>
