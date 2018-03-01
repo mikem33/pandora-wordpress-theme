@@ -5,11 +5,19 @@ var gulp            = require('gulp'),
     nib             = require('nib'),
     stylus          = require('gulp-stylus'),
     rename          = require('gulp-rename'),
-    notify          = require('gulp-notify');
+    notify          = require('gulp-notify'),
+    concat          = require('gulp-concat'),
+    uglify          = require('gulp-uglify');
 
 gulp.task('styles', function(){
     gulp.src('wp-content/themes/pandora-wordpress-theme/assets/css/styl/main.styl')
-        .pipe(stylus({compress: false, use: nib(), paths: ['wp-content/themes/pandora-wordpress-theme/assets/css/styl']}))
+        .pipe(stylus({
+                compress: false, 
+                use: nib(),
+                'include css': true,
+                paths: ['wp-content/themes/pandora-wordpress-theme/assets/css/styl']
+            }))
+            .on('error', swallowError)
             .pipe(rename('wp-content/themes/pandora-wordpress-theme/style.css'))
             .pipe(notify('Compiled!'))
             .pipe(gulp.dest(''))
@@ -18,16 +26,57 @@ gulp.task('styles', function(){
 // The -dev suffix is for development purposes. If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/main.styl')
-        .pipe(stylus({compress: false, use: nib(), paths: ['assets/css/styl']}))
+        .pipe(
+            stylus({
+                compress: false,
+                use: nib(),
+                'include css': true,
+                paths: ['assets/css/styl']
+            }))
+            .on('error', swallowError)
             .pipe(rename('style.css'))
             .pipe(notify('Compiled!'))
             .pipe(gulp.dest(''))
 });
 
-gulp.task('watch-dev', function(){
-    gulp.watch('assets/css/styl/*.styl', ['styles']);
+// Generate Javascript
+gulp.task('js', function(){
+    return gulp.src([
+            'wp-content/themes/pandora-wordpress-theme/assets/js/compile/modernizr.min.js',
+            'wp-content/themes/pandora-wordpress-theme/assets/js/compile/jquery.min.js',
+            'wp-content/themes/pandora-wordpress-theme/assets/js/compile/*.js'
+        ])
+        .pipe(concat('javascript.js'))
+        .pipe(gulp.dest('wp-content/themes/pandora-wordpress-theme/assets/js'))
+        .pipe(uglify())
+        .on('error', swallowError)
+        .pipe(gulp.dest('wp-content/themes/pandora-wordpress-theme/assets/js'));
+});
+
+// Generate Javascript
+gulp.task('js-dev', function(){
+    return gulp.src([
+            'assets/js/compile/*.js'
+        ])
+        .pipe(concat('javascript.js'))
+        .pipe(gulp.dest('assets/js'))
+        .pipe(uglify())
+        .on('error', swallowError)
+        .pipe(gulp.dest('assets/js'));
 });
 
 gulp.task('watch', function(){
     gulp.watch('wp-content/themes/pandora-wordpress-theme/assets/css/styl/*.styl', ['styles']);
+    gulp.watch('wp-content/themes/pandora-wordpress-theme/assets/js/compile/*.js', ['js']);
 });
+
+gulp.task('watch-dev', function(){
+    gulp.watch('assets/css/styl/*.styl', ['styles-dev']);
+    gulp.watch('assets/js/compile/*.js', ['js']);
+});
+
+// Show errors on console.
+function swallowError (error) {
+    console.log(error.toString())
+    this.emit('end')
+}

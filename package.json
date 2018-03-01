@@ -16,9 +16,11 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "^3.9.1",
-    "nib": "^1.1.2",
+    "gulp-concat": "^2.6.1",
     "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.5.0",
-    "gulp-rename": "^1.2.2"
+    "gulp-uglify": "^3.0.0",
+    "nib": "^1.1.2"
   }
 }
