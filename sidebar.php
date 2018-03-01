@@ -1,7 +1,5 @@
-		<aside class="sidebar">
-			<?php if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('sidebar-widgets') ) : ?>
+<aside class="sidebar">
+    <?php if (!function_exists('dynamic_sidebar') || !dynamic_sidebar('sidebar-widgets') ) : ?>
 
-					
-				
-			<?php endif; ?>
-		</aside><!-- #sidebar -->
+    <?php endif; ?>
+</aside><!-- #sidebar -->
