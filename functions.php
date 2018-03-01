@@ -9,9 +9,10 @@
     function pandora_scripts(){
         // Set false if you want to load on the <head>.
         if (!is_admin()) {
-            wp_enqueue_script( 'modernizr', get_template_directory_uri() . '/assets/js/modernizr-2.6.2.min.js', false );
-            wp_enqueue_style( 'pandora-style', get_stylesheet_uri() );
-            wp_enqueue_script( 'jquery', get_template_directory_uri() . '/assets/js/jquery-1.10.1.min.js', array( 'jquery' ), true );
+            wp_enqueue_script( 'modernizr', get_template_directory_uri() . '/assets/js/modernizr-2.6.2.min.js', null, false );
+            wp_enqueue_style( 'pandora-style', get_stylesheet_uri(), array(), '1.00', 'all' );
+            wp_deregister_script('jquery');
+            wp_enqueue_script( 'jquery', get_template_directory_uri() . '/assets/js/jquery-1.10.1.min.js', array(), null, true );
             wp_enqueue_script( 'main-script', get_template_directory_uri() . '/assets/js/main.js', array(),'', true );
             if ( is_single() && get_option( 'thread_comments' ) ) { 
                 wp_enqueue_script( 'comment-reply' );            
