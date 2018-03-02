@@ -4,42 +4,36 @@
         die ('Please do not load this page directly. Thanks!');
     if (!empty($post->post_password)) {
         if ($_COOKIE['wp-postpass_' . COOKIEHASH] != $post->post_password) { ?>
-            <p class="nocomments">This post is password protected. Enter the password to view comments.</p>
+            <p class="nocomments"><?php _e('Este post está protegido con contraseña. Introduce la contraseña para ver los comentarios.','pandora'); ?></p>
             <?php return;
         }
-    }
-    $oddcomment = 'class="comment" '; // alternating comments
+    }    
 ?>
 
 <?php if ('open' == $post->comment_status) : ?>
 
     <section class="comment-form">
-        <h3>Escribe un comentario</h3>
+        <h3><?php _e('Escribe un comentario','pandora'); ?></h3>
 
         <?php if (get_option('comment_registration') && !$user_ID) : ?>
-        <p>Debe <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>">registrarte</a> para dejar un comentario.</p>
+            <p><?php _e('Debe','pandora'); ?> <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>"><?php _e('registrarte','pandora'); ?></a> <?php _e('para dejar un comentario.','pandora'); ?></p>
         <?php else : ?>
-
-        <form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
-
-            <?php if ($user_ID) : ?>
-            <p>Has iniciado sesión como <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?action=logout" title="Log out of this account">Log out &raquo;</a></p>
-            <?php else : ?>
-
-            <input type="text" name="author" id="author" value="<?php echo $comment_author; ?>" size="55" tabindex="1" placeholder="Nombre*" <?php if ($req) echo "aria-required='true'"; ?>>
-            
-            <input type="text" name="email" id="email" value="<?php echo $comment_author_email; ?>" size="55" tabindex="2" placeholder="E-mail*" <?php if ($req) echo "aria-required='true'"; ?>>
-            
-            <input type="text" name="url" id="url" value="<?php echo $comment_author_url; ?>" size="55" tabindex="3" placeholder="Página Web">
-
-            <?php endif; ?>
-            <textarea name="comment" id="comment" cols="55" rows="10" tabindex="4" placeholder="Comentario*"></textarea>
-            <input name="submit" type="submit" id="submit" tabindex="5" value="Enviar comentario &rarr;">
-            <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>">
-            <?php do_action('comment_form', $post->ID); ?>
-            <p>Los campos marcados con un asterisco (*) son obligatorios.</p>
-
-        </form>
+            <form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
+                <?php if ($user_ID) : ?>
+                    <p><?php _e('Has iniciado sesión como','pandora'); ?> <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?action=logout" title="<?php _e('Cerrar sesión en esta cuenta','pandora'); ?>"><?php _e('Log out &raquo;','pandora'); ?></a></p>
+                <?php else : ?>
+                    <input type="text" name="author" id="author" value="<?php echo $comment_author; ?>" size="55" tabindex="1" placeholder="<?php _e('Nombre*','pandora'); ?>" <?php if ($req) echo "aria-required='true'"; ?>>
+                
+                    <input type="text" name="email" id="email" value="<?php echo $comment_author_email; ?>" size="55" tabindex="2" placeholder="<?php _e('E-mail*','pandora'); ?>" <?php if ($req) echo "aria-required='true'"; ?>>
+                
+                    <input type="text" name="url" id="url" value="<?php echo $comment_author_url; ?>" size="55" tabindex="3" placeholder="<?php _e('Página Web','pandora'); ?>">
+                <?php endif; ?>
+                <textarea name="comment" id="comment" cols="55" rows="10" tabindex="4" placeholder="<?php _e('Comentario*','pandora'); ?>"></textarea>
+                <input name="submit" type="submit" id="submit" tabindex="5" value="<?php _e('Enviar comentario &rarr;','pandora'); ?>">
+                <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>">
+                <?php do_action('comment_form', $post->ID); ?>
+                <p><?php _e('Los campos marcados con un asterisco (*) son obligatorios.','pandora'); ?></p>
+            </form>
         <?php endif; ?>
 
     </section><!-- .comment-form -->
@@ -47,11 +41,13 @@
 
 <?php if ($comments) : // there are comments ?>
 
-        <section class="commentlist">
-            <h3><?php comments_number('', 'One comment', '% comments' ); ?></h3>
+    <section class="commentlist">
+        <h3><?php comments_number('', __('Un comentario','pandora'), __('% comentarios','pandora') ); ?></h3>
 
-            <?php foreach ($comments as $comment) : ?>
-
+        <?php 
+            foreach ($comments as $comment) :                 
+        ?>
+            
             <article <?php echo $oddcomment; ?>id="comment-<?php comment_ID(); ?>">
                 <header>
                     <h4>
@@ -60,7 +56,7 @@
                         </div>
                         <div class="comment-meta">
                             <span><?php comment_author_link(); ?></span>
-                            <a href="#comment-<?php comment_ID(); ?>" title="Permalink for this comment">
+                            <a href="#comment-<?php comment_ID(); ?>" title="<?php _e('Enlace permanente a este comentario','pandora'); ?>">
                                 <time datetime="<?php echo date(DATE_W3C); ?>" pubdate class="updated">
                                     <?php the_time('F j, Y') ?> at <?php comment_time(); ?>
                                 </time> 
@@ -68,7 +64,7 @@
                         </div><!-- .meta -->
                     </h4>
                     <?php if ($comment->comment_approved == '0') : ?>
-                        <small>Your comment is awaiting moderation.</small>
+                        <small><?php _e('Tu comentario está esperando aprobación','pandora'); ?></small>
                     <?php endif; ?>
                 </header>
                 <section>
@@ -76,19 +72,19 @@
                 </section>
             </article>
 
-            <?php $oddcomment = (empty($oddcomment)) ? 'class="comment"' : 'class="comment"'; // alternating comments ?>
-            <?php endforeach; ?>
+        <?php 
+            $oddcomment = (empty($oddcomment)) ? 'class="oddcomment comment"' : 'class="comment"'; // alternating comments
+            endforeach; 
+        ?>
 
-        </section>
+    </section>
 
 <?php else : // no comments yet ?>
 
-    <?php if ('open' == $post->comment_status) : ?>
-        <!-- [comments are open, but there are no comments] -->
-
-     <?php else : ?>
-        <!-- [comments are closed, and no comments] -->
+    <?php 
+        if ('open' == $post->comment_status) : 
+        else : 
+    ?>
         <p><?php _e('Los comentarios están cerrados.','pandora'); ?></p>
-
     <?php endif; ?>
 <?php endif; ?>

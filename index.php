@@ -20,12 +20,12 @@
                 </footer>
             </article><!-- .post -->
 
-            <?php endwhile; ?>
+        <?php endwhile; ?>
 
-            <nav class="navigation">
-                <div class="next-posts"><?php next_posts_link(__('Página Siguiente &raquo;', 'pandora')) ?></div>
-                <div class="prev-posts"><?php previous_posts_link(__('&laquo; Página Anterior', 'pandora')) ?></div>
-            </nav>
+        <nav class="navigation">
+            <div class="next-posts"><?php next_posts_link(__('Página Siguiente &raquo;', 'pandora')) ?></div>
+            <div class="prev-posts"><?php previous_posts_link(__('&laquo; Página Anterior', 'pandora')) ?></div>
+        </nav>
 
     </div><!-- /.wrapper -->
 

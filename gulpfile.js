@@ -7,7 +7,6 @@ var themeSlug       = 'wp-content/themes/pandora-wordpress-theme/';
 var fs              = require('fs'),
     gulp            = require('gulp'),
     nib             = require('nib'),
-    util            = require('gulp-util'),
     stylus          = require('gulp-stylus'),
     rename          = require('gulp-rename'),
     notify          = require('gulp-notify'),
@@ -143,10 +142,10 @@ gulp.task('checktextdomain-dev', function() {
     }));
 });
 
-// File where the favicon markups are stored
-var FAVICON_DATA_FILE = 'faviconData.json';
 
 gulp.task('generate-favicon', function(done) {
+    // File where the favicon markups are stored
+    var FAVICON_DATA_FILE = themeSlug + 'assets/images/favicons/faviconData.json';
     realFavicon.generateFavicon({
         masterPicture: themeSlug + 'assets/images/favicons/master-picture.png',
         dest: themeSlug + 'assets/images/favicons',
@@ -210,6 +209,8 @@ gulp.task('generate-favicon', function(done) {
 });
 
 gulp.task('generate-favicon-dev', function(done) {
+    // File where the favicon markups are stored
+    var FAVICON_DATA_FILE = 'assets/images/favicons/faviconData.json';
     realFavicon.generateFavicon({
         masterPicture: 'assets/images/favicons/favicon-master.png',
         dest: 'assets/images/favicons',
