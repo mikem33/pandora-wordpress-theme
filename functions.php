@@ -87,6 +87,10 @@
             $arr[] = 'page__404';   
         }
 
+        if ( is_admin_bar_showing() ) {
+            $arr[] = 'showing-admin-bar';
+        }
+        
         if (is_user_logged_in()) {
             $arr[] = 'logged-in';
         }
