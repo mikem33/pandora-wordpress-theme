@@ -1,5 +1,8 @@
 // This is a base gulp file to start working.
-// Because the paths of the specified files are taking the WP structure (wp-content/themes...), you will have to put this file and the package.json one in the root of the WP installation to work properly. If you feel more comfortable leaving this file into the the wordpress template folder you will have to change the paths consequently. This message will self-destruct in 3, 2, 1...
+// Because the paths of the specified files are taking the WP structure (wp-content/themes...), 
+// you will have to put this file and the package.json one in the root of the WP installation to work properly. 
+// If you feel more comfortable leaving this file into the the wordpress template folder you will have to change the paths consequently. 
+// This message will self-destruct in 3, 2, 1...
 
 // The theme slug variable.
 var themeSlug       = 'wp-content/themes/pandora-wordpress-theme/';
@@ -29,7 +32,8 @@ gulp.task('styles', function(){
         .pipe(gulp.dest(''))
 });
 
-// The -dev suffix is for development purposes. If you want to use this theme to develop your own WordPress theme you can delete this task.
+// The -dev suffix is for development purposes. 
+// If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/main.styl')
         .pipe(
@@ -90,8 +94,8 @@ gulp.task('checktextdomain', function() {
         themeSlug + '**/**/*.php'
     ])
     .pipe(checktextdomain({
-        text_domain: textdomain, //Specify allowed domain(s)
-        keywords: [ //List keyword specifications
+        text_domain: textdomain, // Specify allowed domain
+        keywords: [ // List keyword specifications
             '__:1,2d',
             '_e:1,2d',
             '_x:1,2c,3d',
@@ -120,8 +124,8 @@ gulp.task('checktextdomain-dev', function() {
         '**/**/*.php'
     ])
     .pipe(checktextdomain({
-        text_domain: textdomain, //Specify allowed domain(s)
-        keywords: [ //List keyword specifications
+        text_domain: textdomain, // Specify allowed domain
+        keywords: [ // List keyword specifications
             '__:1,2d',
             '_e:1,2d',
             '_x:1,2c,3d',
@@ -144,7 +148,7 @@ gulp.task('checktextdomain-dev', function() {
 
 
 gulp.task('generate-favicon', function(done) {
-    // File where the favicon markups are stored
+    // File where the favicon markups are stored (unnecessary but I don't know how to avoid its generation).
     var FAVICON_DATA_FILE = themeSlug + 'assets/images/favicons/faviconData.json';
     realFavicon.generateFavicon({
         masterPicture: themeSlug + 'assets/images/favicons/master-picture.png',
@@ -209,7 +213,7 @@ gulp.task('generate-favicon', function(done) {
 });
 
 gulp.task('generate-favicon-dev', function(done) {
-    // File where the favicon markups are stored
+    // File where the favicon markups are stored (unnecessary but I don't know how to avoid its generation).
     var FAVICON_DATA_FILE = 'assets/images/favicons/faviconData.json';
     realFavicon.generateFavicon({
         masterPicture: 'assets/images/favicons/favicon-master.png',
