@@ -21,7 +21,7 @@ var fs              = require('fs'),
 gulp.task('styles', function(){
     gulp.src(themeSlug + 'assets/css/styl/style.styl')
         .pipe(stylus({
-            compress: false, 
+            compress: true, 
             use: nib(),
             'include css': true,
             paths: [themeSlug + 'assets/css/styl']
@@ -38,7 +38,7 @@ gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/style.styl')
         .pipe(
         stylus({
-            compress: false,
+            compress: true,
             use: nib(),
             'include css': true,
             paths: ['assets/css/styl']
