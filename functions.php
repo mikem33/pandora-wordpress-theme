@@ -29,12 +29,6 @@
     }
     add_action( 'wp_enqueue_scripts', 'pandora_scripts' );
 
-    // Enqueue Fonts.
-    function load_fonts() {
-        wp_register_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
-        wp_enqueue_style( 'font-awesome');
-    }
-    
     add_action('wp_print_styles', 'load_fonts');
     
     if (function_exists('register_sidebar')) {
@@ -131,8 +125,79 @@
 
     // Determine the text of the 'Read more'
     function my_more_link($more_link, $more_link_text) {
-    return str_replace($more_link_text, 'Leer más &raquo;', $more_link);
+        return str_replace($more_link_text, __('Seguir leyendo &raquo;', 'enzimum'), $more_link);
     }
     add_filter('the_content_more_link', 'my_more_link', 10, 2);
+
+    function customPostExcerpt($totalPoints = false, $showTitle = true, $titlePoints = false, $echo = true) {
+        if ($totalPoints == false) {
+            $totalPoints = 150;
+        }
+        if ($titlePoints == false) {
+            $titlePoints = 1.2;
+        }
+        if ($showTitle == true) {
+            $title = get_the_title();
+            $pointsTitle = floor(strlen($title) * $titlePoints);
+            $pointsContent = $totalPoints - $pointsTitle;
+            $content = strip_tags(get_the_content());
+            $content = shortenParagraph($content, $pointsContent);
+            if ($echo == true){
+                echo '<h3>'.$title.'</h3><p>'.$content.'</p>';
+            } else {
+                return '<h3 >'.$title.'</h3><p>'.$content.'</p>';
+            }
+        } else {
+            $pointsContent = $totalPoints;
+            $content = strip_tags(get_the_content());
+            $content = shortenParagraph($content, $pointsContent);
+            if ($echo == true){
+                echo '<p>'.$content.'</p>';
+            } else {
+                return '<p>'.$content.'</p>';
+            }
+        }
+    }
+
+    function meta_description() {
+        $current_post = get_post();
+        $post_content = shortenParagraph($current_post->post_content, 300);
+        echo strip_tags($post_content);
+    }
+
+    function shortenParagraph($paragraph, $characters) {
+        if (strlen($paragraph) <= $characters) {
+            return $paragraph;
+        } else {
+            $newParagraph = mb_substr($paragraph, 0, $characters).'...';
+            return $newParagraph;
+        }
+    }
     
+    add_filter('next_posts_link_attributes', 'next_posts_link_attributes');
+    add_filter('previous_posts_link_attributes', 'previous_posts_link_attributes');
+
+    function next_posts_link_attributes() {
+        return 'class="btn btn--next"';
+    }
+    
+    function previous_posts_link_attributes() {
+        return 'class="btn btn--previous"';
+    }
+
+    // Filters the oEmbed process to run the responsive_embed() function
+    add_filter('embed_oembed_html', 'responsive_embed', 10, 3);
+    /**
+     * Adds a responsive embed wrapper around oEmbed content
+     * @param  string $html The oEmbed markup
+     * @param  string $url  The URL being embedded
+     * @param  array  $attr An array of attributes
+     * @return string       Updated embed markup
+     */
+    function responsive_embed($html, $url, $attr) {
+        return $html!=='' ? '<div class="embed-container">'.$html.'</div>' : '';
+    }
+
+    include_once(STYLESHEETPATH.'/includes/meta-graph.php');
+        
 ?>
