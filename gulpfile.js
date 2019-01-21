@@ -19,7 +19,7 @@ var fs              = require('fs'),
     checktextdomain = require('gulp-checktextdomain');;
 
 gulp.task('styles', function(){
-    gulp.src(themeSlug + 'assets/css/styl/main.styl')
+    gulp.src(themeSlug + 'assets/css/styl/style.styl')
         .pipe(stylus({
             compress: false, 
             use: nib(),
@@ -35,7 +35,7 @@ gulp.task('styles', function(){
 // The -dev suffix is for development purposes. 
 // If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
-    gulp.src('assets/css/styl/main.styl')
+    gulp.src('assets/css/styl/style.styl')
         .pipe(
         stylus({
             compress: false,
@@ -76,12 +76,12 @@ gulp.task('js-dev', function(){
 });
 
 gulp.task('watch', function(){
-    gulp.watch(themeSlug + 'assets/css/styl/*.styl', ['styles']);
+    gulp.watch(themeSlug + 'assets/css/styl/**/*.styl', ['styles']);
     gulp.watch(themeSlug + 'assets/js/compile/*.js', ['js']);
 });
 
 gulp.task('watch-dev', function(){
-    gulp.watch('assets/css/styl/*.styl', ['styles-dev']);
+    gulp.watch('assets/css/styl/**/*.styl', ['styles-dev']);
     gulp.watch('assets/js/compile/*.js', ['js']);
 });
 
