@@ -63,3 +63,4 @@ wp-content/themes/twenty*/
 node_modules/
 
 *.DS_Store
+.sass-cache
