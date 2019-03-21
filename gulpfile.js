@@ -11,15 +11,31 @@ var fs              = require('fs'),
     gulp            = require('gulp'),
     nib             = require('nib'),
     stylus          = require('gulp-stylus'),
-    rename          = require('gulp-rename'),
     notify          = require('gulp-notify'),
     concat          = require('gulp-concat'),
     uglify          = require('gulp-uglify'),
+    manifest        = require('./manifest.json'),
+    modernizr       = require('gulp-modernizr'),
+    sourcemaps      = require('gulp-sourcemaps'),    
     realFavicon     = require('gulp-real-favicon'),
-    checktextdomain = require('gulp-checktextdomain');;
+    checktextdomain = require('gulp-checktextdomain');
+
+var requiresJs = manifest.requires.js;
+var jsDependencies = Object.keys(requiresJs).map((key) => { return requiresJs[key] });
+
+gulp.task('init-config', ['modernizr'], function() {
+    gulp.src(jsDependencies)
+        .pipe(gulp.dest(themeSlug + 'assets/javascript/vendor'))
+});
+
+gulp.task('init-config-dev', ['modernizr-dev'], function() {
+    gulp.src(jsDependencies)
+        .pipe(gulp.dest('assets/javascript/vendor'))
+});
 
 gulp.task('styles', function(){
     gulp.src(themeSlug + 'assets/css/styl/style.styl')
+        .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
             use: nib(),
@@ -27,26 +43,26 @@ gulp.task('styles', function(){
             paths: [themeSlug + 'assets/css/styl']
         }))
         .on('error', swallowError)
-        .pipe(rename(themeSlug + 'style.css'))
+        .pipe(sourcemaps.write('.'))
         .pipe(notify('Compiled!'))
-        .pipe(gulp.dest(''))
+        .pipe(gulp.dest(themeSlug))
 });
 
 // The -dev suffix is for development purposes. 
 // If you want to use this theme to develop your own WordPress theme you can delete this task.
 gulp.task('styles-dev', function(){
     gulp.src('assets/css/styl/style.styl')
-        .pipe(
-        stylus({
+        .pipe(sourcemaps.init())
+        .pipe(stylus({
             compress: true,
             use: nib(),
             'include css': true,
             paths: ['assets/css/styl']
         }))
         .on('error', swallowError)
-        .pipe(rename('style.css'))
+        .pipe(sourcemaps.write('.'))
         .pipe(notify('Compiled!'))
-        .pipe(gulp.dest(''))
+        .pipe(gulp.dest('.'))
 });
 
 // Generate Javascript
@@ -83,6 +99,20 @@ gulp.task('watch', function(){
 gulp.task('watch-dev', function(){
     gulp.watch('assets/css/styl/**/*.styl', ['styles-dev']);
     gulp.watch('assets/js/compile/*.js', ['js']);
+});
+
+gulp.task('modernizr', function() {
+    return gulp.src('modernizr.json')
+        .pipe(modernizr(require('./modernizr.json')))
+        .pipe(gulp.dest(themeSlug + 'assets/javascript/vendor'))
+        .pipe(notify('Modernizr has been generated.'))
+});
+
+gulp.task('modernizr-dev', function() {
+    return gulp.src('modernizr.json')
+        .pipe(modernizr(require('./modernizr.json')))
+        .pipe(gulp.dest('assets/javascript/vendor'))
+        .pipe(notify('Modernizr has been generated.'))
 });
 
 // Check textdomains in the theme.

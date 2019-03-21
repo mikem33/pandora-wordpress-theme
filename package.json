@@ -13,7 +13,12 @@
   "author": "Miguel Morera",
   "license": "ISC",
   "homepage": "https://bitbucket.org/miguelmorera/pandora-wordpress-theme#readme",
-  "dependencies": {},
+  "dependencies": {
+    "gulp-modernizr": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "jquery": "^1.12.0",
+    "modernizr": "^3.6.0"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-checktextdomain": "^2.1.1",
@@ -22,6 +27,7 @@
     "gulp-real-favicon": "^0.2.2",
     "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.5.0",
+    "gulp-svg-sprite": "^1.5.0",
     "gulp-uglify": "^3.0.0",
     "nib": "^1.1.2"
   }

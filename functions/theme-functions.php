@@ -21,7 +21,7 @@
     add_image_size( 'gallery-thumbnail', 150, 150, true );
 
     /**
-     * Create default menu positions.
+     * Create default menu spaces.
      */
     function register_my_menus() {
         register_nav_menus(
@@ -126,4 +126,16 @@
         return $html!=='' ? '<div class="embed-container">'.$html.'</div>' : '';
     }
     add_filter('embed_oembed_html', 'responsive_embed', 10, 3);
+
+    function load_google_fonts() { ?>
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+        <script>
+            WebFont.load({
+                google: {
+                    families: []
+                }
+            });
+        </script>
+    <?php }
+    add_action('wp_footer', 'load_google_fonts');
 ?>

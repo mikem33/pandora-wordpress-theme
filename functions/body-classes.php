@@ -1,7 +1,8 @@
 <?php
     // Customising the classes on the body_class function.    
     function my_class_names($classes) {  
-        global $wp_query;  
+        global $wp_query;
+        global $post;
       
         $arr = array();  
         
@@ -10,9 +11,10 @@
         }
 
         if(is_page()) {  
-            global $post;
-            $post_slug = $post->post_name;
-            $arr[] = 'page__' . $post_slug;  
+            $page_slug = $post->post_name;
+            $page_id = get_the_ID();
+            $page_template_slug = str_replace(array('page-templates/', '.php'), '', get_page_template_slug($page_id));
+            $arr[] = 'page__'. $page_template_slug .' page__' . $page_slug;
         }  
       
         if(is_single()) {  
