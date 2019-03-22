@@ -127,15 +127,19 @@
     }
     add_filter('embed_oembed_html', 'responsive_embed', 10, 3);
 
-    function load_google_fonts() { ?>
-        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
-        <script>
-            WebFont.load({
-                google: {
-                    families: []
-                }
-            });
-        </script>
+    function load_google_fonts($fonts) { ?>
+        <?php $fonts = ""; ?>
+        <?php if ($fonts) : ?>
+            <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+            <script>
+                WebFont.load({
+                    google: {
+                        families: [<?php echo $fonts; ?>]
+                    }
+                });
+            </script>
+        <?php endif; ?>
     <?php }
+    
     add_action('wp_footer', 'load_google_fonts');
 ?>
