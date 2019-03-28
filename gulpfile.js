@@ -68,37 +68,37 @@ gulp.task('styles-dev', function(){
 // Generate Javascript
 gulp.task('js', function(){
     return gulp.src([
-            themeSlug + 'assets/js/compile/modernizr.min.js',
-            themeSlug + 'assets/js/compile/jquery.min.js',
-            themeSlug + 'assets/js/compile/*.js'
+            themeSlug + 'assets/javascript/vendor/modernizr.min.js',
+            themeSlug + 'assets/javascript/vendor/jquery.min.js',
+            themeSlug + 'assets/javascript/compile/*.js'
         ])
         .pipe(concat('javascript.js'))
-        .pipe(gulp.dest(themeSlug + 'assets/js'))
+        .pipe(gulp.dest(themeSlug + 'assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)
-        .pipe(gulp.dest(themeSlug + 'assets/js'));
+        .pipe(gulp.dest(themeSlug + 'assets/javascript'));
 });
 
 // Generate Javascript
 gulp.task('js-dev', function(){
     return gulp.src([
-            'assets/js/compile/*.js'
+            'assets/javascript/compile/*.js'
         ])
         .pipe(concat('javascript.js'))
-        .pipe(gulp.dest('assets/js'))
+        .pipe(gulp.dest('assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)
-        .pipe(gulp.dest('assets/js'));
+        .pipe(gulp.dest('assets/javascript'));
 });
 
 gulp.task('watch', function(){
     gulp.watch(themeSlug + 'assets/css/styl/**/*.styl', ['styles']);
-    gulp.watch(themeSlug + 'assets/js/compile/*.js', ['js']);
+    gulp.watch(themeSlug + 'assets/javascript/compile/*.js', ['js']);
 });
 
 gulp.task('watch-dev', function(){
     gulp.watch('assets/css/styl/**/*.styl', ['styles-dev']);
-    gulp.watch('assets/js/compile/*.js', ['js']);
+    gulp.watch('assets/javascript/compile/*.js', ['js']);
 });
 
 gulp.task('modernizr', function() {
