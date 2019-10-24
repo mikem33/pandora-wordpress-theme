@@ -1,4 +1,5 @@
 <?php
+    include_once(STYLESHEETPATH.'/functions/global-variables.php');
     include_once(STYLESHEETPATH.'/functions/reset.php');
     include_once(STYLESHEETPATH.'/functions/favicon.php');
     include_once(STYLESHEETPATH.'/functions/enqueue.php');
