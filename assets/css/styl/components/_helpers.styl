@@ -193,41 +193,24 @@ img
             margin-left auto
             margin-right auto
 
-/* ---------------------------- *\
+:root
+    +above(1200)
+        /* $min-width: $1200px */
+        --section 2.85rem
+        --space 2.85rem
+    +between(768,1199)
+        /* $min-width: $768px / $max-width: $1199px */
+        --section 2.5rem
+        --space 1.75rem
+    +below(767)
+        /* $max-width: $767px */
+        --section 1.5rem
+        --space 1rem
+
+.section
+    padding-top var(--section)
+    padding-bottom var(--section)
     
-    $Media $Queries
-
-\* ---------------------------- */
-
-+above(1201)
-    /* $min-width: $1201px */
-    
-    .section
-        padding-top 2.85rem
-        padding-bottom 2.85rem
-        
-    .space
-        padding-left 2.85rem
-        padding-right 2.85rem        
-
-+between(768,1200)
-    /* $min-width: $768px / $max-width: $1200px */
-    
-    .section
-        padding-top 2.5rem
-        padding-bottom 2.5rem        
-
-    .space
-        padding-left 1.75rem
-        padding-right 1.75rem
-
-+below(767)
-    /* $max-width: $767px */
-    
-    .section
-        padding-top 1.5rem
-        padding-bottom 1.5rem        
-
-    .space
-        padding-left 1rem
-        padding-right 1rem        
+.space
+    padding-left var(--space)
+    padding-right var(--space)
