@@ -21,7 +21,7 @@ textarea
 
 body
     line-height 1.4
-    font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif    
+    font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif
 
 ::-moz-selection
     background $darkGrey
@@ -95,7 +95,7 @@ a
 
 .row
     width 100%
-      
+
 .half
     width 50%
 
@@ -193,13 +193,25 @@ img
             margin-left auto
             margin-right auto
 
+.embed-container
+    height 0
+    overflow hidden
+    position relative
+    padding-bottom 56.25%
+    iframe
+        top 0
+        left 0
+        width 100%
+        height 100%
+        position absolute
+
 :root
     +above(1200)
         /* $min-width: $1200px */
         --section 2.85rem
         --space 2.85rem
     +between(768,1199)
-        /* $min-width: $768px / $max-width: $1199px */
+        /* $min-width: $768px // $max-width: $1199px */
         --section 2.5rem
         --space 1.75rem
     +below(767)
@@ -210,7 +222,7 @@ img
 .section
     padding-top var(--section)
     padding-bottom var(--section)
-    
+
 .space
     padding-left var(--space)
     padding-right var(--space)
