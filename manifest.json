@@ -1,7 +1,10 @@
 {
-    "requires": {
-        "js": {
-            "jquery": "node_modules/jquery/dist/jquery.min.js"
-        }
+    "theme": {
+        "slug": "pandora",
+        "name": "Pandora Wordpress Theme",
+        "description": "Base Custom Wordpress Theme for developing sites.",
+        "author": "Miguel Morera",
+        "author_uri": "https://www.miguelmorera.com",
+        "version": "2.0.0"
     }
 }
