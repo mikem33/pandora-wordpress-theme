@@ -34,7 +34,7 @@ gulp.task('js', function(done){
     return gulp.src([
             'build/wp-content/themes/' + theme.slug + '/assets/javascript/compile/*.js'
         ])
-        .pipe(concat('javascript.js'))
+        .pipe(concat('javascript.min.js'))
         .pipe(gulp.dest('build/wp-content/themes/' + theme.slug + '/assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)

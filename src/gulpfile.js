@@ -48,7 +48,7 @@ gulp.task('js', function(){
     return gulp.src([
             themeSlug + 'assets/javascript/compile/*.js'
         ])
-        .pipe(concat('javascript.js'))
+        .pipe(concat('javascript.min.js'))
         .pipe(gulp.dest(themeSlug + 'assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)
