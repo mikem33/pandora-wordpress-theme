@@ -29,7 +29,7 @@ gulp.task('init-config', gulp.series(function(done) {
 }));
 
 gulp.task('styles', function(){
-    gulp.src(themeSlug + 'assets/css/styl/style.styl')
+    return gulp.src(themeSlug + 'assets/css/styl/style.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
@@ -59,19 +59,6 @@ gulp.task('watch', function(){
     gulp.watch(themeSlug + 'assets/css/styl/**/*.styl', gulp.series('styles'));
     gulp.watch(themeSlug + 'assets/javascript/compile/*.js', gulp.series('js'));
 });
-
-// config = {
-//     svg: {
-//         xmlDeclaration: false,
-//         doctypeDeclaration: false
-//     },
-//     mode: {
-//         symbol: {
-//             dest: '.',
-//             sprite: 'sprites.svg'
-//         }
-//     }
-// };
 
 gulp.task('svgsprites', function(done) {
     gulp.src(themeSlug + 'assets/images/_sprites-svg/*.svg')

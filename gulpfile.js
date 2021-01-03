@@ -15,30 +15,30 @@ var fs              = require('fs-extra'),
     checktextdomain = require('gulp-checktextdomain');
 
 gulp.task('styles', function(done){
-    gulp.src('build/' + theme.slug + '/assets/css/styl/style.styl')
+    gulp.src('build/wp-content/themes/' + theme.slug + '/assets/css/styl/style.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
             use: nib(),
             'include css': true,
-            paths: ['build/' + theme.slug + '/assets/css/styl']
+            paths: ['build/wp-content/themes/' + theme.slug + '/assets/css/styl']
         }))
         .on('error', swallowError)
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('build/' + theme.slug));
+        .pipe(gulp.dest('build/wp-content/themes/' + theme.slug));
     done();
 });
 
 // Generate Javascript
 gulp.task('js', function(done){
     return gulp.src([
-            'build/' + theme.slug + '/assets/javascript/compile/*.js'
+            'build/wp-content/themes/' + theme.slug + '/assets/javascript/compile/*.js'
         ])
         .pipe(concat('javascript.js'))
-        .pipe(gulp.dest('build/' + theme.slug + '/assets/javascript'))
+        .pipe(gulp.dest('build/wp-content/themes/' + theme.slug + '/assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)
-        .pipe(gulp.dest('build/' + theme.slug + '/assets/javascript'));
+        .pipe(gulp.dest('build/wp-content/themes/' + theme.slug + '/assets/javascript'));
     done();
 });
 
@@ -46,9 +46,9 @@ gulp.task('js', function(done){
 gulp.task('checktextdomain', function() {
     var textDomain = theme.slug;
     return gulp.src([
-        'build/' + textDomain + '/*.php',
-        'build/' + textDomain + '/**/*.php',
-        'build/' + textDomain + '/**/**/*.php'
+        'build/wp-content/themes/' + textDomain + '/*.php',
+        'build/wp-content/themes/' + textDomain + '/**/*.php',
+        'build/wp-content/themes/' + textDomain + '/**/**/*.php'
     ])
     .pipe(checktextdomain({
         text_domain: textDomain, // Specify allowed domain
@@ -75,11 +75,11 @@ gulp.task('checktextdomain', function() {
 
 gulp.task('generate-favicon', function(done) {
     // File where the favicon markups are stored (unnecessary but I don't know how to avoid its generation).
-    var FAVICON_DATA_FILE = 'build/' + theme.slug + '/assets/images/favicons/faviconData.json';
+    var FAVICON_DATA_FILE = 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/faviconData.json';
     realFavicon.generateFavicon({
-        masterPicture: 'build/' + theme.slug + '/assets/images/favicons/favicon-master.png',
-        dest: 'build/' + theme.slug + '/assets/images/favicons',
-        iconsPath: 'build/' + theme.slug + '/assets/images/favicons/',
+        masterPicture: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/favicon-master.png',
+        dest: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons',
+        iconsPath: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/',
         design: {
             ios: {
                 pictureAspect: 'noChange',
@@ -148,12 +148,12 @@ gulp.task('copy-development-files', function() {
 });
 
 gulp.task('copy-theme-files', function() {
-    return gulp.src('src/theme/**/*.*')
-        .pipe(gulp.dest('build/' + theme.slug))
+    return gulp.src('src/wp-content/themes/theme/**/*.*')
+        .pipe(gulp.dest('build/wp-content/themes/' + theme.slug))
 });
 
 gulp.task('replace-css-handlebars', function(done) {
-    return gulp.src('build/' + theme.slug + '/assets/css/styl/style.styl')
+    return gulp.src('build/wp-content/themes/' + theme.slug + '/assets/css/styl/style.styl')
         .pipe(replace('{{theme_name}}', theme.name))
         .pipe(replace('{{theme_description}}', theme.description))
         .pipe(replace('{{theme_author}}', theme.author))
