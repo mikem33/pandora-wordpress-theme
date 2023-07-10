@@ -4,7 +4,6 @@ const theme         = manifest.theme;
 
 var fs              = require('fs-extra'),
     gulp            = require('gulp'),
-    nib             = require('nib'),
     stylus          = require('gulp-stylus'),
     concat          = require('gulp-concat'),
     uglify          = require('gulp-uglify'),
@@ -19,7 +18,6 @@ gulp.task('styles', function(done){
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
-            use: nib(),
             'include css': true,
             paths: ['build/wp-content/themes/' + theme.slug + '/assets/css/styl']
         }))
