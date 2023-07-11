@@ -3,25 +3,25 @@
     $WP $Admin $Bar $Tweaks
 
 \*----------------------------- */
-    
-@media (min-width: unit(783/16,'em'))
+
++above(783)
     /* $min-width: $783px */
     
     // $General
     .logged-in.showing-admin-bar
-        margin-top 32px        
+        margin-top rem(32)
 
-@media (min-width: unit(601/16,'em')) and (max-width: unit(782/16,'em'))
++between(601, 782)
     /* $min-width: $601px / $max-width: $782px */
     
     // $General
     .logged-in.showing-admin-bar
-        margin-top 46px
+        margin-top rem(46)
 
-@media (max-width: unit(600/16,'em'))
++below(600)
     /* $max-width: $600px */
     
     // $General
     .logged-in.showing-admin-bar
         margin-top 0
-        padding-top 46px
+        padding-top rem(46)

@@ -3,11 +3,9 @@
     $Mixins
 
 \* ---------------------------- */
-
-// $Font-size
-font-size($fontValue = $fontSize, $baseFontValue = $fontSize)
-    font-size   $fontValue px
-    font-size   ($fontValue / $baseFontValue) rem
+// $Remify
+rem($value)
+    return unit($value/16, 'rem')
     
 // $Center Object function.
 centerObject($horizontal = true, $vertical = true)
@@ -47,7 +45,7 @@ placeholder()
 
 // $Media $Queries
 above($value, $width = true)
-    $value = unit($value/16, em)
+    $value = rem($value)
     if $width == true
         media = '(min-width: %s)' % $value
     else
@@ -56,7 +54,7 @@ above($value, $width = true)
         {block}
         
 below($value, $width = true)
-    $value = unit($value/16, em)
+    $value = rem($value)
     if $width == true
         media = '(max-width: %s)' % $value
     else
@@ -65,8 +63,8 @@ below($value, $width = true)
         {block}
 
 between($minValue, $maxValue, $width = true)
-    $minValue = unit($minValue/16, em)
-    $maxValue = unit($maxValue/16, em)
+    $minValue = rem($minValue)
+    $maxValue = rem($maxValue)
     if $width == true
         from = '(min-width: %s)' % $minValue
         to = '(max-width: %s)' % $maxValue
