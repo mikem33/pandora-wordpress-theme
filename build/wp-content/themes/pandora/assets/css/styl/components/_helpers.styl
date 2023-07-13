@@ -191,16 +191,16 @@ img
 :root
     +above(1200)
         /* $min-width: $1200px */
-        --section 2.85rem
-        --space 2.85rem
+        --section rem(50)
+        --space rem(50)
     +between(768,1199)
         /* $min-width: $768px // $max-width: $1199px */
-        --section 2.5rem
-        --space 1.75rem
+        --section rem(40)
+        --space rem(28)
     +below(767)
         /* $max-width: $767px */
-        --section 1.5rem
-        --space 1rem
+        --section rem(24)
+        --space rem(16)
 
 .section
     padding-top var(--section)
