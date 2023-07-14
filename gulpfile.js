@@ -1,6 +1,6 @@
 // This is the Gulp file used for generate the theme or develop this package.
-const manifest      = require('./manifest.json');
-const theme         = manifest.theme;
+const manifest      = require('./manifest.json'),
+      theme         = manifest.theme;
 
 var fs              = require('fs-extra'),
     gulp            = require('gulp'),
@@ -13,7 +13,7 @@ var fs              = require('fs-extra'),
     replace         = require('gulp-string-replace'),
     checktextdomain = require('gulp-checktextdomain');
 
-gulp.task('styles', function(done){
+gulp.task('main-style', function(done){
     gulp.src('build/wp-content/themes/' + theme.slug + '/assets/css/styl/style.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
@@ -24,6 +24,20 @@ gulp.task('styles', function(done){
         .on('error', swallowError)
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('build/wp-content/themes/' + theme.slug));
+    done();
+});
+
+gulp.task('pages-style', function(done){
+    gulp.src('build/wp-content/themes/' + theme.slug + '/assets/css/styl/pages/*.styl')
+        .pipe(sourcemaps.init())
+        .pipe(stylus({
+            compress: true, 
+            'include css': true,
+            paths: ['build/wp-content/themes/' + theme.slug + '/assets/css/styl/pages']
+        }))
+        .on('error', swallowError)
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('build/wp-content/themes/' + theme.slug + '/assets/css/pages'));
     done();
 });
 
@@ -169,7 +183,7 @@ gulp.task('build', function (callback) {
         'copy-development-files',
         'checktextdomain',
         'replace-css-handlebars',
-        ['styles','js'],
+        ['main-style', 'pages-style', 'js'],
         'generate-favicon',
         callback
     );
