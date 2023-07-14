@@ -26,6 +26,9 @@
             $arr[] = 'post single post-id-' . $post_id;
         }
 
+        // if (is_singular('pd_custom_post_type')) {
+        // }
+
         if(is_404()) {
             $arr[] = 'page__404';
         }
