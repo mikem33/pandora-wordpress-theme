@@ -4,7 +4,6 @@ const manifest      = require('./manifest.json'),
       themeSlug     = 'wp-content/themes/'+ textDomain +'/';
 
 var gulp            = require('gulp'),
-    nib             = require('nib'),
     babel           = require('gulp-babel')
     stylus          = require('gulp-stylus'),
     concat          = require('gulp-concat'),
@@ -28,19 +27,32 @@ gulp.task('init-config', gulp.series(function(done) {
     done();
 }));
 
-gulp.task('styles', function(){
-    return gulp.src(themeSlug + 'assets/css/styl/style.styl')
+gulp.task('main-style', function(done){
+    gulp.src(theme.slug + '/assets/css/styl/style.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
-            use: nib(),
             'include css': true,
-            paths: [themeSlug + 'assets/css/styl']
+            paths: [theme.slug + '/assets/css/styl']
         }))
         .on('error', swallowError)
         .pipe(sourcemaps.write('.'))
-        .pipe(notify('Compiled!'))
-        .pipe(gulp.dest(themeSlug))
+        .pipe(gulp.dest(theme.slug));
+    done();
+});
+
+gulp.task('pages-style', function(done){
+    gulp.src(theme.slug + '/assets/css/styl/pages/*.styl')
+        .pipe(sourcemaps.init())
+        .pipe(stylus({
+            compress: true, 
+            'include css': true,
+            paths: [theme.slug + '/assets/css/styl/pages']
+        }))
+        .on('error', swallowError)
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(theme.slug + '/assets/css/pages'));
+    done();
 });
 
 // Generate Javascript
@@ -56,7 +68,10 @@ gulp.task('js', function(){
 });
 
 gulp.task('watch', function(){
-    gulp.watch(themeSlug + 'assets/css/styl/**/*.styl', gulp.series('styles'));
+    gulp.watch(themeSlug + 'assets/css/styl/components/*.styl', gulp.series('main-styl'));
+    gulp.watch(themeSlug + 'assets/css/styl/partials/*.styl', gulp.series('main-styl'));
+    gulp.watch(themeSlug + 'assets/css/styl/utilities/*.styl', gulp.series('main-styl', 'pages-style'));
+    gulp.watch(themeSlug + 'assets/css/styl/pages/*.styl', gulp.series('pages-style'));
     gulp.watch(themeSlug + 'assets/javascript/compile/*.js', gulp.series('js'));
 });
 
