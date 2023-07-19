@@ -165,12 +165,16 @@ gulp.task('copy-theme-files', function() {
 });
 
 gulp.task('replace-css-handlebars', function(done) {
-    return gulp.src('build/wp-content/themes/' + theme.slug + '/assets/css/styl/style.styl')
+    return gulp.src([
+        'build/wp-content/themes/' + theme.slug + '/assets/css/styl/style.styl',
+        'build/manifest.json'
+    ])
         .pipe(replace('{{theme_name}}', theme.name))
         .pipe(replace('{{theme_description}}', theme.description))
         .pipe(replace('{{theme_author}}', theme.author))
         .pipe(replace('{{theme_author_uri}}', theme.author_uri))
         .pipe(replace('{{theme_version}}', theme.version))
+        .pipe(replace('{{theme_slug}}', theme.slug))
         .pipe(gulp.dest(function (file) {
             return file.base;
         }));
