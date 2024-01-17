@@ -1,6 +1,6 @@
 {
   "name": "pandora-wordpress-theme",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Base Custom Wordpress Theme for developing sites.",
   "main": "gulpfile.js",
   "dependencies": {
@@ -12,14 +12,12 @@
     "gulp": "^4.0.2",
     "gulp-checktextdomain": "^2.2.1",
     "gulp-concat": "^2.6.1",
-    "gulp-real-favicon": "^0.3.2",
     "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.1.4",
     "gulp-sourcemaps": "^2.6.5",
-    "gulp-string-replace": "^1.1.2",
     "gulp-stylus": "^2.7.0",
     "gulp-uglify": "^3.0.2",
-    "gulp4-run-sequence": "^1.0.1",
-    "nib": "^1.1.2"
+    "gulp4-run-sequence": "^1.0.1"
   },
   "scripts": {
     "test": "gulp"

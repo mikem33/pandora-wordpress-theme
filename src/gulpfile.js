@@ -1,7 +1,7 @@
 // Development
-const manifest      = require('./manifest.json'),
-      textDomain    = manifest.theme,
-      themeSlug     = 'wp-content/themes/'+ textDomain +'/';
+const manifest  = require('./manifest.json'),
+      theme     = manifest.theme,
+      themePath = 'wp-content/themes/' + theme.slug;
 
 var gulp            = require('gulp'),
     babel           = require('gulp-babel')
@@ -9,8 +9,7 @@ var gulp            = require('gulp'),
     concat          = require('gulp-concat'),
     uglify          = require('gulp-uglify'),
     svgSprites      = require('gulp-svg-sprite'),
-    sourcemaps      = require('gulp-sourcemaps'),
-    realFavicon     = require('gulp-real-favicon');
+    sourcemaps      = require('gulp-sourcemaps');
 
 var requires        = manifest.requires,
     cssRequires     = requires.css,
@@ -21,64 +20,64 @@ var requires        = manifest.requires,
 
 gulp.task('init-config', gulp.series(function(done) {
     gulp.src(cssDependencies)
-        .pipe(gulp.dest(themeSlug + 'assets/css/vendor'))
+        .pipe(gulp.dest(themePath + '/assets/css/vendor'))
     gulp.src(jsDependencies)
-        .pipe(gulp.dest(themeSlug + 'assets/javascript/vendor'));
+        .pipe(gulp.dest(themePath + '/assets/javascript/vendor'));
     done();
 }));
 
 gulp.task('main-style', function(done){
-    gulp.src(theme.slug + '/assets/css/styl/style.styl')
+    gulp.src(themePath + '/assets/css/styl/style.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
             'include css': true,
-            paths: [theme.slug + '/assets/css/styl']
+            paths: [themePath + '/assets/css/styl']
         }))
         .on('error', swallowError)
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(theme.slug));
+        .pipe(gulp.dest(themePath));
     done();
 });
 
 gulp.task('pages-style', function(done){
-    gulp.src(theme.slug + '/assets/css/styl/pages/*.styl')
+    gulp.src(themePath + '/assets/css/styl/pages/*.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({
             compress: true, 
             'include css': true,
-            paths: [theme.slug + '/assets/css/styl/pages']
+            paths: [themePath + '/assets/css/styl/pages']
         }))
         .on('error', swallowError)
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(theme.slug + '/assets/css/pages'));
+        .pipe(gulp.dest(themePath + '/assets/css/pages'));
     done();
 });
 
 // Generate Javascript
 gulp.task('js', function(){
     return gulp.src([
-            themeSlug + 'assets/javascript/compile/*.js'
+            themePath + '/assets/javascript/compile/*.js'
         ])
         .pipe(concat('javascript.min.js'))
-        .pipe(gulp.dest(themeSlug + 'assets/javascript'))
+        .pipe(gulp.dest(themePath + '/assets/javascript'))
         .pipe(uglify())
         .on('error', swallowError)
-        .pipe(gulp.dest(themeSlug + 'assets/javascript'));
+        .pipe(gulp.dest(themePath + '/assets/javascript'));
 });
 
 gulp.task('watch', function(){
-    gulp.watch(themeSlug + 'assets/css/styl/components/*.styl', gulp.series('main-styl'));
-    gulp.watch(themeSlug + 'assets/css/styl/partials/*.styl', gulp.series('main-styl'));
-    gulp.watch(themeSlug + 'assets/css/styl/utilities/*.styl', gulp.series('main-styl', 'pages-style'));
-    gulp.watch(themeSlug + 'assets/css/styl/pages/*.styl', gulp.series('pages-style'));
-    gulp.watch(themeSlug + 'assets/javascript/compile/*.js', gulp.series('js'));
+    gulp.watch(themePath + '/assets/css/styl/components/*.styl', gulp.series('main-style'));
+    gulp.watch(themePath + '/assets/css/styl/partials/*.styl', gulp.series('main-style'));
+    gulp.watch(themePath + '/assets/css/styl/utilities/*.styl', gulp.series('main-style', 'pages-style'));
+    gulp.watch(themePath + '/assets/css/styl/pages/*.styl', gulp.series('pages-style'));
+    gulp.watch(themePath + '/assets/javascript/compile/*.js', gulp.series('js'));
 });
 
 gulp.task('svgsprites', function(done) {
-    gulp.src(themeSlug + 'assets/images/_sprites-svg/*.svg')
+    gulp.src(themePath + 'assets/images/_sprites-svg/*.svg')
     .pipe(svgSprites(config))
-    .pipe(gulp.dest(themeSlug + 'assets/images'));
+    .pipe(gulp.dest(themePath + 'assets/images'));
     done();
 });
 

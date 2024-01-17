@@ -7,6 +7,7 @@
 !.gitignore
 !gulpfile.js
 !package.json
+!manifest.json
 # track readme.md in the root (i.e. do NOT ignore it)
 !readme.md
 # ignore all files that start with ~

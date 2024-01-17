@@ -7,10 +7,9 @@ var fs              = require('fs-extra'),
     stylus          = require('gulp-stylus'),
     concat          = require('gulp-concat'),
     uglify          = require('gulp-uglify'),
+    replace         = require('gulp-replace'),
     sourcemaps      = require('gulp-sourcemaps'),
-    realFavicon     = require('gulp-real-favicon'),
     runSequence     = require('gulp4-run-sequence'),
-    replace         = require('gulp-string-replace'),
     checktextdomain = require('gulp-checktextdomain');
 
 gulp.task('main-style', function(done){
@@ -85,71 +84,6 @@ gulp.task('checktextdomain', function() {
     }));
 });
 
-gulp.task('generate-favicon', function(done) {
-    // File where the favicon markups are stored (unnecessary but I don't know how to avoid its generation).
-    var FAVICON_DATA_FILE = 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/faviconData.json';
-    realFavicon.generateFavicon({
-        masterPicture: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/favicon-master.png',
-        dest: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons',
-        iconsPath: 'build/wp-content/themes/' + theme.slug + '/assets/images/favicons/',
-        design: {
-            ios: {
-                pictureAspect: 'noChange',
-                assets: {
-                    ios6AndPriorIcons: false,
-                    ios7AndLaterIcons: false,
-                    precomposedIcons: false,
-                    declareOnlyDefaultIcon: true
-                }
-            },
-            desktopBrowser: {},
-            windows: {
-                pictureAspect: 'noChange',
-                backgroundColor: '#2b5797',
-                onConflict: 'override',
-                assets: {
-                    windows80Ie10Tile: false,
-                    windows10Ie11EdgeTiles: {
-                        small: false,
-                        medium: true,
-                        big: false,
-                        rectangle: false
-                    }
-                }
-            },
-            androidChrome: {
-                pictureAspect: 'noChange',
-                themeColor: '#ffffff',
-                manifest: {
-                    display: 'standalone',
-                    orientation: 'notSet',
-                    onConflict: 'override',
-                    declared: true
-                },
-                assets: {
-                    legacyIcon: false,
-                    lowResolutionIcons: false
-                }
-            },
-            safariPinnedTab: {
-                pictureAspect: 'blackAndWhite',
-                threshold: 50,
-                themeColor: '#5bbad5'
-            }
-        },
-        settings: {
-            scalingAlgorithm: 'Mitchell',
-            errorOnImageTooSmall: false,
-            readmeFile: false,
-            htmlCodeFile: false,
-            usePathAsIs: false
-        },
-        markupFile: FAVICON_DATA_FILE
-    }, function() {
-        done();
-    });
-});
-
 gulp.task('clean-build', function () {
     return fs.remove('build');
 });
@@ -162,6 +96,11 @@ gulp.task('copy-development-files', function() {
 gulp.task('copy-theme-files', function() {
     return gulp.src('src/wp-content/themes/theme/**/*.*')
         .pipe(gulp.dest('build/wp-content/themes/' + theme.slug))
+});
+
+gulp.task('copy-manifest', function() {
+    return gulp.src('manifest.json')
+        .pipe(gulp.dest('build'))
 });
 
 gulp.task('replace-css-handlebars', function(done) {
@@ -184,11 +123,11 @@ gulp.task('build', function (callback) {
     runSequence(
         'clean-build',
         'copy-theme-files',
+        'copy-manifest',
         'copy-development-files',
         'checktextdomain',
         'replace-css-handlebars',
         ['main-style', 'pages-style', 'js'],
-        'generate-favicon',
         callback
     );
 });
