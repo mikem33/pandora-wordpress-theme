@@ -188,24 +188,24 @@ img
         height 100%
         position absolute
 
-:root
+root
     +above(1200)
         /* $min-width: $1200px */
-        --h-space rem(64)
         --v-space rem(64)
+        --h-space rem(64)
     +between(768,1199)
         /* $min-width: $768px / $max-width: $1199px */
-        --h-space rem(45)
         --v-space rem(30)
+        --h-space rem(45)
     +below(767)
         /* $max-width: $767px */
-        --h-space rem(32)
         --v-space rem(16)
+        --h-space rem(32)
 
 .h-space
-    padding-top var(--h-space)
-    padding-bottom var(--v-space)
+    padding-left var(--h-space)
+    padding-right var(--h-space)
 
 .v-space
-    padding-left var(--h-space)
-    padding-right var(--v-space)
+    padding-top var(--v-space)
+    padding-bottom var(--v-space)
