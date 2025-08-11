@@ -2,4 +2,162 @@
 
     $Main
 
-\* ---------------------------- */
+\*----------------------------- */
+
+// Own reset
+
+*,
+*:before,
+*:after
+    box-sizing border-box
+
+html
+    font-size rem(16)
+
+html,
+button,
+input,
+select,
+textarea
+    color $darkGrey
+
+body
+    line-height 1.4
+    font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif
+
+::-moz-selection
+    background $darkGrey
+    color white
+    text-shadow none
+
+::selection
+    background $darkGrey
+    color white
+    text-shadow none
+
+hr
+    border 0
+    padding 0
+    height 1px
+    margin 1em 0
+    display block
+    border-top 1px solid #ccc
+
+img
+    height auto
+    max-width 100%
+    vertical-align middle
+
+fieldset
+    border 0
+    margin 0
+    padding 0
+
+textarea
+    resize vertical
+
+.chromeframe
+    margin 0.2em 0
+    background #ccc
+    color #000
+    padding 0.2em 0
+
+// $Layout
+
+.wrapper
+    width 100%
+    margin 0 auto
+    if wrapperSize
+        max-width $wrapperSize
+    position relative
+
+.align
+    width 100%
+    height 100%
+    display table
+    > div
+        display table-cell
+        vertical-align middle
+
+.flex
+    display flex
+    flex-wrap wrap
+    &--no-wrap
+        @extend .flex
+        flex-flow column
+
+.flex-centering
+    centerFlexbox(true,true)
+
+.grid
+    display grid
+    +above(1024)
+        for $num in (1..6)
+            &--{$num}
+                grid-template-columns repeat($num, 1fr)
+
+.h-space
+    padding-left var(--h-space)
+    padding-right var(--h-space)
+
+.v-space
+    padding-top var(--v-space)
+    padding-bottom var(--v-space)
+
+// $Font $Weight
+
+h1, h2, h3, h4, h5, h6, strong
+    font-weight 700
+
+a
+    text-decoration none
+    &:visited
+        color inherit
+
+// $Elements
+
+.overlay
+    top 0
+    left 0
+    opacity 0
+    z-index 5
+    width 100%
+    height 100%
+    display block
+    cursor pointer
+    position fixed
+    padding 40px 0
+    overflow-y auto
+    visibility hidden
+    pointer-events none
+    background-color rgba(0,0,0,.4)
+    transition opacity .5s, visibility .5s, transform .4s
+    -webkit-tap-highlight-color transparent
+    -webkit-tap-highlight-color rgba(0,0,0,0)
+
+.embed-container
+    height 0
+    overflow hidden
+    position relative
+    padding-bottom 56.25%
+    iframe
+        top 0
+        left 0
+        width 100%
+        height 100%
+        position absolute
+
+// $States
+
+.nondisplayed
+    display none
+
+.hide-item
+    opacity 0
+    visibility hidden
+    transition opacity .3s ease-out, visibility .3s ease-out
+
+.show-item
+    opacity 1
+    visibility visible
+    transition opacity .3s ease-out, visibility .3s ease-out
