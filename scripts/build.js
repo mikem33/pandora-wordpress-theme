@@ -59,11 +59,13 @@ async function runBuild() {
     await checkTextdomain(theme);
     await replaceCssHandlebars(theme);
 
+    const themeDir = path.join(BUILD, 'wp-content', 'themes', theme.slug);
+
     // Run styles and scripts in parallel
     await Promise.all([
-      compileStyles(theme),
-      compileJavaScript(theme),
-      compileSvgSprites(theme)
+      compileStyles(themeDir),
+      compileJavaScript(themeDir),
+      compileSvgSprites(themeDir)
     ]);
 
     log(`Build completed successfully!`);
