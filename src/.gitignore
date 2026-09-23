@@ -5,8 +5,9 @@
 .*
 # track this file .gitignore (i.e. do NOT ignore it)
 !.gitignore
-!gulpfile.js
+!scripts/
 !package.json
+!pnpm-lock.yaml
 !manifest.json
 # track readme.md in the root (i.e. do NOT ignore it)
 !readme.md
