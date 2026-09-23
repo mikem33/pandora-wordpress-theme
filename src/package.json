@@ -12,8 +12,8 @@
     "terser": "^5.19.4"
   },
   "scripts": {
-    "build": "node scripts/build.js",
-    "dev": "node scripts/build.js --watch"
+    "build": "node scripts/theme.js",
+    "dev": "node scripts/theme.js --watch"
   },
   "author": "{{theme_author}}",
   "license": "ISC"
