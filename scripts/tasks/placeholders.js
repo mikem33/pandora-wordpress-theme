@@ -33,7 +33,8 @@ async function replaceCssHandlebars(theme) {
   const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
   const filesToReplace = [
     path.join(themeBuild, 'assets', 'css', 'styl', 'style.styl'),
-    path.join(BUILD, 'manifest.json')
+    path.join(BUILD, 'manifest.json'),
+    path.join(BUILD, 'package.json')
   ];
 
   await replaceInFiles(filesToReplace, theme);

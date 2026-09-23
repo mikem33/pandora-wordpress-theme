@@ -31,24 +31,11 @@ async function copyManifest() {
 }
 
 async function copyDevelopmentFiles() {
-  // Copy .gitignore from root
-  const gitignoreSrc = path.join(ROOT, '.gitignore');
-  if (await fs.pathExists(gitignoreSrc)) {
-    await copyFile(gitignoreSrc, path.join(BUILD, '.gitignore'));
-  }
+  // These belong to the generated theme, not to this repo, so they come from src/
+  await copyFile(path.join(SRC, '.gitignore'), path.join(BUILD, '.gitignore'));
+  await copyFile(path.join(SRC, 'package.json'), path.join(BUILD, 'package.json'));
 
-  // Copy package.json from root
-  const packageJsonSrc = path.join(ROOT, 'package.json');
-  if (await fs.pathExists(packageJsonSrc)) {
-    await copyFile(packageJsonSrc, path.join(BUILD, 'package.json'));
-  }
-
-  // Copy scripts/ directory
-  const scriptsSrc = path.join(ROOT, 'scripts');
-  const scriptsDest = path.join(BUILD, 'scripts');
-  if (await fs.pathExists(scriptsSrc)) {
-    await copyDir(scriptsSrc, scriptsDest);
-  }
+  await copyDir(path.join(ROOT, 'scripts'), path.join(BUILD, 'scripts'));
 }
 
 module.exports = {
