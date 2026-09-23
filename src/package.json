@@ -2,7 +2,7 @@
   "name": "{{theme_slug}}",
   "version": "{{theme_version}}",
   "description": "{{theme_description}}",
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "pnpm@12.6.0",
   "dependencies": {
     "fs-extra": "^8.1.0"
   },
