@@ -3,10 +3,11 @@
 ## [Unreleased - Modernization in Progress]
 
 ### Modernization Plan (June 2026)
-- Phase 0: Preparation for Gulp → Vite + Node orchestrator migration
+- Phase 0: Preparation for the Gulp → Node orchestrator migration
   - Branch: `upgrade`
   - Reference point: Gulp build system v4.0.2
-  - Goal: Replace Gulp with custom Node script + Vite for JS/blocks
+  - Goal: Replace Gulp with a custom Node script. A bundler (Vite) is only
+    evaluated in Phase 3, if the Gutenberg blocks call for one
 
 #### Current Gulp Build System (Baseline - 2026-06-17)
 Build steps replicated in new system:
@@ -21,7 +22,7 @@ Build steps replicated in new system:
 9. `js` — Concatenates and minifies JavaScript files
 10. *Planned*: `svgsprites` — Generates SVG sprite from `assets/images/_sprites-svg/*.svg`
 
-#### Dependencies
+#### Dependencies (baseline)
 - Gulp 4.0.2
 - gulp-stylus 2.7.0
 - gulp-concat 2.6.1
@@ -30,6 +31,21 @@ Build steps replicated in new system:
 - gulp-replace 1.1.4
 - gulp-checktextdomain 2.2.1
 - fs-extra 8.1.0
+
+#### Phase 1 — Node build system (done)
+- `scripts/build.js` orchestrates the build; each step lives in `scripts/tasks/`
+- Stylus compiled with the `stylus` library, CSS sourcemaps included
+- JavaScript concatenated and minified with `terser`, still a single
+  `javascript.min.js`
+- SVG sprite generation implemented without dependencies: the SVG files in
+  `assets/images/_sprites-svg/` become `<symbol>` elements in a single
+  `sprite.svg`
+- Watch mode (`pnpm dev`) rebuilds on change, skipping chokidar's initial scan
+- The generated theme now gets its own `.gitignore` and `package.json` from
+  `src/`, with the manifest values replaced, instead of the boilerplate's
+- `build/` is no longer versioned: it is regenerated with `pnpm build`
+- pnpm pinned to 12.6.0 and `pnpm-lock.yaml` tracked
+- Runtime dependencies: fs-extra, stylus, terser, chokidar
 
 ---
 
