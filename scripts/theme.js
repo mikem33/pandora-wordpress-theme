@@ -14,6 +14,7 @@ const theme = manifest.theme;
 const { compileStyles } = require('./tasks/styles');
 const { compileJavaScript } = require('./tasks/scripts');
 const { compileSvgSprites } = require('./tasks/sprites');
+const { generateThemeJson } = require('./tasks/theme-json');
 
 const ROOT = path.join(__dirname, '..');
 const THEME = path.join(ROOT, 'wp-content', 'themes', theme.slug);
@@ -39,7 +40,8 @@ async function compileTheme() {
     await Promise.all([
       compileStyles(THEME),
       compileJavaScript(THEME),
-      compileSvgSprites(THEME)
+      compileSvgSprites(THEME),
+      generateThemeJson(THEME)
     ]);
 
     log(`Done`);
@@ -68,8 +70,20 @@ function startLiveReload() {
     req.on('close', () => clients.delete(res));
   });
 
+  // The marker only goes in once the port is actually ours
+  server.on('listening', () => {
+    fs.writeFileSync(MARKER, String(PORT), 'utf-8');
+    log(`Live reload listening on port ${PORT}`);
+  });
+
+  // A busy port must not take the whole watcher down with it
+  server.on('error', err => {
+    if (err.code !== 'EADDRINUSE') throw err;
+    logError(`Port ${PORT} is busy, live reload is off. Set LIVERELOAD_PORT to use another one.`);
+    fs.removeSync(MARKER);
+  });
+
   server.listen(PORT);
-  fs.writeFileSync(MARKER, String(PORT), 'utf-8');
 
   // Idle connections get dropped by proxies without a periodic byte
   const ping = setInterval(() => {
@@ -85,8 +99,6 @@ function startLiveReload() {
   process.on('SIGTERM', () => { stop(); process.exit(0); });
   process.on('exit', stop);
 
-  log(`Live reload listening on port ${PORT}`);
-
   return function notify() {
     for (const client of clients) client.write('data: reload\n\n');
   };
@@ -97,6 +109,7 @@ async function startWatch() {
 
   // Only the sources: watching the whole theme would pick up its own output
   const watchDirs = [
+    path.join(THEME, 'tokens.json'),
     path.join(THEME, 'assets', 'css', 'styl'),
     path.join(THEME, 'assets', 'javascript', 'compile'),
     path.join(THEME, 'assets', 'images', '_sprites-svg')

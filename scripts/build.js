@@ -14,6 +14,7 @@ const { checkTextdomain } = require('./tasks/textdomain');
 const { compileStyles } = require('./tasks/styles');
 const { compileJavaScript } = require('./tasks/scripts');
 const { compileSvgSprites } = require('./tasks/sprites');
+const { generateThemeJson } = require('./tasks/theme-json');
 
 const ROOT = path.join(__dirname, '..');
 const BUILD = path.join(ROOT, 'build');
@@ -65,7 +66,8 @@ async function runBuild() {
     await Promise.all([
       compileStyles(themeDir),
       compileJavaScript(themeDir),
-      compileSvgSprites(themeDir)
+      compileSvgSprites(themeDir),
+      generateThemeJson(themeDir)
     ]);
 
     log(`Build completed successfully!`);

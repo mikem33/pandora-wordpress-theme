@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/theme.json",
+    "version": 3,
+    "settings": {
+        "appearanceTools": true,
+        "layout": {
+            "contentSize": "75rem",
+            "wideSize": "90rem"
+        },
+        "color": {
+            "custom": true,
+            "defaultPalette": false,
+            "defaultGradients": false,
+            "palette": []
+        },
+        "typography": {
+            "fluid": false,
+            "defaultFontSizes": false,
+            "fontFamilies": [
+                {
+                    "slug": "system",
+                    "name": "System",
+                    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"
+                }
+            ],
+            "fontSizes": []
+        },
+        "spacing": {
+            "units": [
+                "px",
+                "rem",
+                "em",
+                "%",
+                "vw",
+                "vh"
+            ],
+            "defaultSpacingSizes": false,
+            "spacingSizes": []
+        }
+    }
+}

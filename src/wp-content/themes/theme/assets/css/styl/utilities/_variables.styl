@@ -4,9 +4,23 @@
 
 \* ---------------------------- */
 
+// The design tokens live in tokens.json, next to theme.json, so the editor
+// and this stylesheet never drift apart.
+$tokens = json('../../../../tokens.json', { hash: true })
+$colors = $tokens['colors']
+$sizes = $tokens['fontSizes']
+$spacing = $tokens['spacing']
+
 $fontSize = 16
-$darkGrey = #333
-$lightGrey = #666
+$darkGrey = $colors['dark-grey']
+$lightGrey = $colors['light-grey']
+
+// Stylus cannot index a hash inside a nested block, so the spacing steps are
+// named here and used further down
+$space20 = $spacing['20']
+$space40 = $spacing['40']
+$space60 = $spacing['60']
+$space80 = $spacing['80']
 $basetransition = 250ms linear
 $pseudotransition = 250ms ease-in-out
 $wrapperSize = unit(1200/16, 'rem')
