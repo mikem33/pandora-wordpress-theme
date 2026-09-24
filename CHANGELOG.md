@@ -12,6 +12,10 @@
 - `pnpm wizard`: asks for the theme details, writes `manifest.json` and runs
   the build, so generating a project no longer means editing the manifest by
   hand. The slug defaults to a slugified name and the version to 1.0.0.
+- `theme.prefix` in the manifest, asked by the wizard and substituted into the
+  theme's PHP: function names and asset handles now carry the project's own
+  prefix instead of `pandora_` and `pd-`. A missing manifest value now fails
+  the build instead of reaching the theme as "undefined".
 - Live reload while developing the generated theme. `pnpm dev` serves
   Server-Sent Events and the theme injects a client that reloads the page
   after each successful compile, with no dependencies and no proxy. It is only
