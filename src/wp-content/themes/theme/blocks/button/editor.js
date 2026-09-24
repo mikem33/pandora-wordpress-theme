@@ -52,14 +52,20 @@
                         } )
                     )
                 ),
-                el( RichText, Object.assign( useBlockProps( { className: 'button' } ), {
-                    tagName: 'span',
-                    value: attributes.text,
-                    placeholder: __( 'Button text', '{{theme_slug}}' ),
-                    onChange: function ( value ) {
-                        setAttributes( { text: value } );
-                    }
-                } ) )
+                el(
+                    'div',
+                    useBlockProps(),
+                    el( RichText, {
+                        tagName: 'span',
+                        className: 'button',
+                        allowedFormats: [],
+                        value: attributes.text,
+                        placeholder: __( 'Button text', '{{theme_slug}}' ),
+                        onChange: function ( value ) {
+                            setAttributes( { text: value } );
+                        }
+                    } )
+                )
             );
         },
 

@@ -32,6 +32,18 @@
      * script be plain JavaScript with no build step.
      */
     function {{theme_prefix}}_enqueue_block_editors() {
+        // The same stylesheet the front end gets, so a block is not edited blind
+        foreach ( glob( get_stylesheet_directory() . '/assets/css/blocks/*.css' ) as $style ) {
+            $name = basename( $style, '.css' );
+
+            wp_enqueue_style(
+                '{{theme_slug}}-block-editor-style-' . $name,
+                get_stylesheet_directory_uri() . '/assets/css/blocks/' . $name . '.css',
+                array(),
+                wp_get_theme()->get( 'Version' )
+            );
+        }
+
         foreach ( glob( get_stylesheet_directory() . '/assets/javascript/blocks/*.js' ) as $editor ) {
             $name = basename( $editor, '.js' );
 
