@@ -89,9 +89,22 @@ blocks/
     style.styl         its stylesheet
 ```
 
-The theme registers whatever it finds there, so starting a block is copying the
-folder, renaming it in `block.json` and writing the three files. Nothing else
-needs editing.
+The theme registers whatever it finds there, so a block needs no wiring. To
+start one:
+
+```
+pnpm create-block
+```
+
+It asks for a title, a slug, an icon and a description, and writes the folder
+with the four files already filled in. It works both here and inside a
+generated project, where it uses that project's own slug.
+
+The icon is a [Dashicons](https://developer.wordpress.org/resource/dashicons/)
+name, which is the quickest way to get one. WordPress now draws its own block
+icons from SVG instead, so for a custom or brand icon, pass an SVG element as
+the `icon` in `registerBlockType` inside `editor.js` and drop the field from
+`block.json`.
 
 The blocks are dynamic: the front end comes from `render.php`, so the markup
 stays in PHP with the theme's own classes, and the editor side is plain

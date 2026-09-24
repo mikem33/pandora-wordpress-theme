@@ -1,20 +1,21 @@
 {
-  "name": "{{theme_slug}}",
-  "version": "{{theme_version}}",
-  "description": "{{theme_description}}",
-  "packageManager": "pnpm@12.6.0",
-  "dependencies": {
-    "fs-extra": "^8.1.0"
-  },
-  "devDependencies": {
-    "chokidar": "^3.5.3",
-    "stylus": "^0.56.0",
-    "terser": "^5.19.4"
-  },
-  "scripts": {
-    "build": "node scripts/theme.js",
-    "dev": "node scripts/theme.js --watch"
-  },
-  "author": "{{theme_author}}",
-  "license": "ISC"
+    "name": "{{theme_slug}}",
+    "version": "{{theme_version}}",
+    "description": "{{theme_description}}",
+    "packageManager": "pnpm@12.6.0",
+    "dependencies": {
+        "fs-extra": "^8.1.0"
+    },
+    "devDependencies": {
+        "chokidar": "^3.5.3",
+        "stylus": "^0.56.0",
+        "terser": "^5.19.4"
+    },
+    "scripts": {
+        "build": "node scripts/theme.js",
+        "dev": "node scripts/theme.js --watch",
+        "create-block": "node scripts/create-block.js"
+    },
+    "author": "{{theme_author}}",
+    "license": "ISC"
 }

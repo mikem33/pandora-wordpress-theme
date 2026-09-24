@@ -14,7 +14,8 @@
     "scripts": {
         "wizard": "node scripts/wizard.js",
         "build": "node scripts/build.js",
-        "dev": "node scripts/build.js --watch"
+        "dev": "node scripts/build.js --watch",
+        "create-block": "node scripts/create-block.js"
     },
     "repository": {
         "type": "git",
