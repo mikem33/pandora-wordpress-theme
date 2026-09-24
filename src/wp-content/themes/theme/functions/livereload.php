@@ -1,7 +1,7 @@
 <?php
     // The reload client is only injected while `pnpm dev` runs: that is what
     // writes the .livereload marker, and it removes it when stopped.
-    function pandora_livereload() {
+    function {{theme_prefix}}_livereload() {
         $marker = get_stylesheet_directory() . '/.livereload';
 
         if ( ! file_exists( $marker ) ) {
@@ -22,5 +22,5 @@
         </script>
         <?php
     }
-    add_action( 'wp_footer', 'pandora_livereload' );
+    add_action( 'wp_footer', '{{theme_prefix}}_livereload' );
 ?>
