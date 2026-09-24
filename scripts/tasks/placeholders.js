@@ -8,14 +8,17 @@ function log(message) {
   console.log(`[BUILD] ${message}`);
 }
 
-function replacePlaceholders(content, theme) {
+const REQUIRED = ['slug', 'prefix', 'name', 'description', 'author', 'author_uri', 'version'];
+
+function applyPlaceholders(content, theme) {
   return content
     .replace(/{{theme_name}}/g, theme.name)
     .replace(/{{theme_description}}/g, theme.description)
     .replace(/{{theme_author}}/g, theme.author)
     .replace(/{{theme_author_uri}}/g, theme.author_uri)
     .replace(/{{theme_version}}/g, theme.version)
-    .replace(/{{theme_slug}}/g, theme.slug);
+    .replace(/{{theme_slug}}/g, theme.slug)
+    .replace(/{{theme_prefix}}/g, theme.prefix);
 }
 
 async function replaceInFiles(filePaths, theme) {
@@ -23,23 +26,41 @@ async function replaceInFiles(filePaths, theme) {
     if (!await fs.pathExists(filePath)) continue;
 
     const content = await fs.readFile(filePath, 'utf-8');
-    const replaced = replacePlaceholders(content, theme);
+    const replaced = applyPlaceholders(content, theme);
+
+    if (replaced === content) continue;
+
     await fs.writeFile(filePath, replaced, 'utf-8');
     log(`Replaced placeholders in ${path.relative(ROOT, filePath)}`);
   }
 }
 
-async function replaceCssHandlebars(theme) {
+async function phpFiles(themeDir) {
+  const entries = await fs.readdir(themeDir, { recursive: true });
+  return entries
+    .filter(entry => entry.endsWith('.php'))
+    .map(entry => path.join(themeDir, entry));
+}
+
+async function replacePlaceholders(theme) {
+  const missing = REQUIRED.filter(key => !theme[key]);
+
+  if (missing.length > 0) {
+    throw new Error(`manifest.json is missing theme.${missing.join(', theme.')}`);
+  }
+
   const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
+
   const filesToReplace = [
     path.join(themeBuild, 'assets', 'css', 'styl', 'style.styl'),
     path.join(BUILD, 'manifest.json'),
-    path.join(BUILD, 'package.json')
+    path.join(BUILD, 'package.json'),
+    ...await phpFiles(themeBuild)
   ];
 
   await replaceInFiles(filesToReplace, theme);
 }
 
 module.exports = {
-  replaceCssHandlebars
+  replacePlaceholders
 };

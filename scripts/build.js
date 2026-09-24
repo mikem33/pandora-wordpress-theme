@@ -9,7 +9,7 @@ const theme = manifest.theme;
 
 // Import task modules
 const { copyThemeFiles, copyManifest, copyDevelopmentFiles } = require('./tasks/copy');
-const { replaceCssHandlebars } = require('./tasks/placeholders');
+const { replacePlaceholders } = require('./tasks/placeholders');
 const { checkTextdomain } = require('./tasks/textdomain');
 const { compileStyles } = require('./tasks/styles');
 const { compileJavaScript } = require('./tasks/scripts');
@@ -57,13 +57,15 @@ async function runBuild() {
     await copyManifest();
     await copyDevelopmentFiles();
     await checkTextdomain(theme);
-    await replaceCssHandlebars(theme);
+    await replacePlaceholders(theme);
+
+    const themeDir = path.join(BUILD, 'wp-content', 'themes', theme.slug);
 
     // Run styles and scripts in parallel
     await Promise.all([
-      compileStyles(theme),
-      compileJavaScript(theme),
-      compileSvgSprites(theme)
+      compileStyles(themeDir),
+      compileJavaScript(themeDir),
+      compileSvgSprites(themeDir)
     ]);
 
     log(`Build completed successfully!`);

@@ -3,7 +3,6 @@ const path = require('path');
 const { minify } = require('terser');
 
 const ROOT = path.join(__dirname, '..', '..');
-const BUILD = path.join(ROOT, 'build');
 
 function log(message) {
   console.log(`[BUILD] ${message}`);
@@ -13,10 +12,9 @@ function logError(message) {
   console.error(`[ERROR] ${message}`);
 }
 
-async function compileJavaScript(theme) {
-  const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
-  const compileDir = path.join(themeBuild, 'assets', 'javascript', 'compile');
-  const outputDir = path.join(themeBuild, 'assets', 'javascript');
+async function compileJavaScript(themeDir) {
+  const compileDir = path.join(themeDir, 'assets', 'javascript', 'compile');
+  const outputDir = path.join(themeDir, 'assets', 'javascript');
   const outputFile = path.join(outputDir, 'javascript.min.js');
 
   if (!await fs.pathExists(compileDir)) {

@@ -1,6 +1,7 @@
 {
     "theme": {
         "slug": "pandora",
+        "prefix": "pandora",
         "name": "Pandora Wordpress Theme",
         "description": "Base Custom Wordpress Theme for developing sites.",
         "author": "Miguel Morera",

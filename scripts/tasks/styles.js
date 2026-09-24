@@ -3,7 +3,6 @@ const path = require('path');
 const stylus = require('stylus');
 
 const ROOT = path.join(__dirname, '..', '..');
-const BUILD = path.join(ROOT, 'build');
 
 function log(message) {
   console.log(`[BUILD] ${message}`);
@@ -43,17 +42,15 @@ async function compileStylusFile(inputPath, outputPath) {
   });
 }
 
-async function compileMainStyle(theme) {
-  const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
-  const inputFile = path.join(themeBuild, 'assets', 'css', 'styl', 'style.styl');
-  const outputFile = path.join(themeBuild, 'style.css');
+async function compileMainStyle(themeDir) {
+  const inputFile = path.join(themeDir, 'assets', 'css', 'styl', 'style.styl');
+  const outputFile = path.join(themeDir, 'style.css');
   await compileStylusFile(inputFile, outputFile);
 }
 
-async function compilePageStyles(theme) {
-  const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
-  const pagesDir = path.join(themeBuild, 'assets', 'css', 'styl', 'pages');
-  const outputDir = path.join(themeBuild, 'assets', 'css', 'pages');
+async function compilePageStyles(themeDir) {
+  const pagesDir = path.join(themeDir, 'assets', 'css', 'styl', 'pages');
+  const outputDir = path.join(themeDir, 'assets', 'css', 'pages');
 
   if (!await fs.pathExists(pagesDir)) {
     log(`Pages directory not found, skipping page styles`);
@@ -70,10 +67,10 @@ async function compilePageStyles(theme) {
   }
 }
 
-async function compileStyles(theme) {
+async function compileStyles(themeDir) {
   log(`Compiling stylesheets`);
-  await compileMainStyle(theme);
-  await compilePageStyles(theme);
+  await compileMainStyle(themeDir);
+  await compilePageStyles(themeDir);
 }
 
 module.exports = {

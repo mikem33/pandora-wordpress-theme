@@ -30,12 +30,23 @@ async function copyManifest() {
   await copyFile(path.join(ROOT, 'manifest.json'), path.join(BUILD, 'manifest.json'));
 }
 
+// The generator (build.js, copy, placeholders, textdomain) stays behind: the
+// generated project has no src/ to generate from, it compiles in place
+const THEME_TOOLCHAIN = [
+  'theme.js',
+  path.join('tasks', 'styles.js'),
+  path.join('tasks', 'scripts.js'),
+  path.join('tasks', 'sprites.js')
+];
+
 async function copyDevelopmentFiles() {
   // These belong to the generated theme, not to this repo, so they come from src/
   await copyFile(path.join(SRC, '.gitignore'), path.join(BUILD, '.gitignore'));
   await copyFile(path.join(SRC, 'package.json'), path.join(BUILD, 'package.json'));
 
-  await copyDir(path.join(ROOT, 'scripts'), path.join(BUILD, 'scripts'));
+  for (const file of THEME_TOOLCHAIN) {
+    await copyFile(path.join(ROOT, 'scripts', file), path.join(BUILD, 'scripts', file));
+  }
 }
 
 module.exports = {

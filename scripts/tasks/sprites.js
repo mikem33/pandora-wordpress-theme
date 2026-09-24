@@ -2,7 +2,6 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const BUILD = path.join(ROOT, 'build');
 
 const SVG_TAG = /<svg\b([^>]*)>([\s\S]*)<\/svg>/i;
 const VIEW_BOX = /viewBox\s*=\s*["']([^"']+)["']/i;
@@ -26,10 +25,9 @@ function buildSymbol(name, svg) {
   return `<symbol id="icon-${name}" viewBox="${viewBox[1]}">${content.trim()}</symbol>`;
 }
 
-async function compileSvgSprites(theme) {
-  const themeBuild = path.join(BUILD, 'wp-content', 'themes', theme.slug);
-  const spritesDir = path.join(themeBuild, 'assets', 'images', '_sprites-svg');
-  const outputFile = path.join(themeBuild, 'assets', 'images', 'sprite.svg');
+async function compileSvgSprites(themeDir) {
+  const spritesDir = path.join(themeDir, 'assets', 'images', '_sprites-svg');
+  const outputFile = path.join(themeDir, 'assets', 'images', 'sprite.svg');
 
   if (!await fs.pathExists(spritesDir)) {
     log(`No SVG sprites directory, skipping sprite generation`);
