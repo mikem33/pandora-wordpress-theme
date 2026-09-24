@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "{{theme_slug}}/button",
+    "title": "Button",
+    "category": "{{theme_slug}}",
+    "icon": "button",
+    "description": "A link styled as a button. The reference block: copy the folder to start a new one.",
+    "textdomain": "{{theme_slug}}",
+    "attributes": {
+        "text": {
+            "type": "string",
+            "default": ""
+        },
+        "url": {
+            "type": "string",
+            "default": ""
+        },
+        "opensInNewTab": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": [
+            "left",
+            "center",
+            "right"
+        ]
+    },
+    "render": "file:./render.php"
+}
