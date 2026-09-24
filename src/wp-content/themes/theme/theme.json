@@ -3,10 +3,7 @@
     "version": 3,
     "settings": {
         "appearanceTools": true,
-        "layout": {
-            "contentSize": "75rem",
-            "wideSize": "90rem"
-        },
+        "layout": {},
         "color": {
             "custom": true,
             "defaultPalette": false,

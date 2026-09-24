@@ -43,6 +43,7 @@ async function generateThemeJson(themeDir) {
   const tokens = await fs.readJson(tokensPath);
   const themeJson = await fs.readJson(themeJsonPath);
 
+  themeJson.settings.layout = tokens.layout;
   themeJson.settings.color.palette = palette(tokens.colors);
   themeJson.settings.typography.fontSizes = fontSizes(tokens.fontSizes);
   themeJson.settings.spacing.spacingSizes = spacingSizes(tokens.spacing);

@@ -10,8 +10,9 @@ $tokens = json('../../../../tokens.json', { hash: true })
 $colors = $tokens['colors']
 $sizes = $tokens['fontSizes']
 $spacing = $tokens['spacing']
+$layout = $tokens['layout']
 
-$fontSize = 16
+$fontSize = $tokens['baseFontSize']
 $darkGrey = $colors['dark-grey']
 $lightGrey = $colors['light-grey']
 
@@ -23,4 +24,4 @@ $space60 = $spacing['60']
 $space80 = $spacing['80']
 $basetransition = 250ms linear
 $pseudotransition = 250ms ease-in-out
-$wrapperSize = unit(1200/16, 'rem')
+$wrapperSize = $layout['contentSize']
