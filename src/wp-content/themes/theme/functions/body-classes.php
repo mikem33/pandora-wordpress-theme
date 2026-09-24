@@ -1,6 +1,6 @@
 <?php
     // Customising the classes on the body_class function.
-    function my_class_names($classes) {
+    function {{theme_prefix}}_body_classnames($classes) {
         global $wp_query;
         global $post;
 
@@ -44,5 +44,5 @@
         return $arr;
     }
 
-    add_filter('body_class','my_class_names');
+    add_filter('body_class','{{theme_prefix}}_body_classnames');
 ?>

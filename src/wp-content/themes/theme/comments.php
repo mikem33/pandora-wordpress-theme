@@ -1,90 +1,76 @@
-<?php 
-    // Do not delete these lines
-    if (!empty($_SERVER['SCRIPT_FILENAME']) && 'comments.php' == basename($_SERVER['SCRIPT_FILENAME']))
-        die ('Please do not load this page directly. Thanks!');
-    if (!empty($post->post_password)) {
-        if ($_COOKIE['wp-postpass_' . COOKIEHASH] != $post->post_password) { ?>
-            <p class="nocomments"><?php _e('Este post está protegido con contraseña. Introduce la contraseña para ver los comentarios.','theme-slug'); ?></p>
-            <?php return;
-        }
-    }    
+<?php
+    /**
+     * Comments. The markup of each one lives in functions/comments.php, and
+     * the form is built by comment_form() so plugins and the nonce work.
+     */
+
+    if ( post_password_required() ) {
+        return;
+    }
+
+    $comment_required = (bool) get_option( 'require_name_email' );
+    $commenter        = wp_get_current_commenter();
 ?>
 
-<?php if ('open' == $post->comment_status) : ?>
+<section id="comments" class="comments">
 
-    <section class="comment-form">
-        <h3><?php _e('Escribe un comentario','theme-slug'); ?></h3>
+    <?php if ( have_comments() ) : ?>
 
-        <?php if (get_option('comment_registration') && !$user_ID) : ?>
-            <p><?php _e('Debe','theme-slug'); ?> <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>"><?php _e('registrarte','theme-slug'); ?></a> <?php _e('para dejar un comentario.','theme-slug'); ?></p>
-        <?php else : ?>
-            <form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
-                <?php if ($user_ID) : ?>
-                    <p><?php _e('Has iniciado sesión como','theme-slug'); ?> <a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a>. <a href="<?php echo get_option('siteurl'); ?>/wp-login.php?action=logout" title="<?php _e('Cerrar sesión en esta cuenta','theme-slug'); ?>"><?php _e('Log out &raquo;','theme-slug'); ?></a></p>
-                <?php else : ?>
-                    <input type="text" name="author" id="author" value="<?php echo $comment_author; ?>" size="55" tabindex="1" placeholder="<?php _e('Nombre*','theme-slug'); ?>" <?php if ($req) echo "aria-required='true'"; ?>>
-                
-                    <input type="text" name="email" id="email" value="<?php echo $comment_author_email; ?>" size="55" tabindex="2" placeholder="<?php _e('E-mail*','theme-slug'); ?>" <?php if ($req) echo "aria-required='true'"; ?>>
-                
-                    <input type="text" name="url" id="url" value="<?php echo $comment_author_url; ?>" size="55" tabindex="3" placeholder="<?php _e('Página Web','theme-slug'); ?>">
-                <?php endif; ?>
-                <textarea name="comment" id="comment" cols="55" rows="10" tabindex="4" placeholder="<?php _e('Comentario*','theme-slug'); ?>"></textarea>
-                <input name="submit" type="submit" id="submit" tabindex="5" value="<?php _e('Enviar comentario &rarr;','theme-slug'); ?>">
-                <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>">
-                <?php do_action('comment_form', $post->ID); ?>
-                <p><?php _e('Los campos marcados con un asterisco (*) son obligatorios.','theme-slug'); ?></p>
-            </form>
-        <?php endif; ?>
+        <h3 class="comments-title">
+            <?php
+                comments_number(
+                    __( 'No comments', 'theme-slug' ),
+                    __( 'One comment', 'theme-slug' ),
+                    __( '% comments', 'theme-slug' )
+                );
+            ?>
+        </h3>
 
-    </section><!-- .comment-form -->
-<?php endif; ?>
+        <ol class="comment-list">
+            <?php
+                wp_list_comments( array(
+                    'style'    => 'ol',
+                    'callback' => '{{theme_prefix}}_comment',
+                ) );
+            ?>
+        </ol>
 
-<?php if ($comments) : // there are comments ?>
+        <?php the_comments_pagination(); ?>
 
-    <section class="commentlist">
-        <h3><?php comments_number('', __('Un comentario','theme-slug'), __('% comentarios','theme-slug') ); ?></h3>
-
-        <?php 
-            foreach ($comments as $comment) :                 
-        ?>
-            
-            <article <?php echo $oddcomment; ?>id="comment-<?php comment_ID(); ?>">
-                <header>
-                    <h4>
-                        <div class="avatar">
-                            <?php echo get_avatar( $comment, 32 ); ?>
-                        </div>
-                        <div class="comment-meta">
-                            <span><?php comment_author_link(); ?></span>
-                            <a href="#comment-<?php comment_ID(); ?>" title="<?php _e('Enlace permanente a este comentario','theme-slug'); ?>">
-                                <time datetime="<?php echo date(DATE_W3C); ?>" pubdate class="updated">
-                                    <?php the_time('F j, Y') ?> at <?php comment_time(); ?>
-                                </time> 
-                            </a>
-                        </div><!-- .meta -->
-                    </h4>
-                    <?php if ($comment->comment_approved == '0') : ?>
-                        <small><?php _e('Tu comentario está esperando aprobación','theme-slug'); ?></small>
-                    <?php endif; ?>
-                </header>
-                <section>
-                    <?php comment_text(); ?>
-                </section>
-            </article>
-
-        <?php 
-            $oddcomment = (empty($oddcomment)) ? 'class="oddcomment comment"' : 'class="comment"'; // alternating comments
-            endforeach; 
-        ?>
-
-    </section>
-
-<?php else : // no comments yet ?>
-
-    <?php 
-        if ('open' == $post->comment_status) : 
-        else : 
-    ?>
-        <p><?php _e('Los comentarios están cerrados.','theme-slug'); ?></p>
     <?php endif; ?>
-<?php endif; ?>
+
+    <?php if ( ! comments_open() && get_comments_number() ) : ?>
+        <p class="no-comments"><?php _e( 'Comments are closed.', 'theme-slug' ); ?></p>
+    <?php endif; ?>
+
+    <?php
+        comment_form( array(
+            'title_reply'          => __( 'Leave a comment', 'theme-slug' ),
+            'comment_notes_before' => '',
+            'comment_field'        => sprintf(
+                '<p class="comment-form-comment"><label class="screen-reader-text" for="comment">%1$s</label><textarea id="comment" name="comment" cols="45" rows="8" placeholder="%1$s" required></textarea></p>',
+                esc_attr__( 'Comment', 'theme-slug' )
+            ),
+            'fields'               => array(
+                'author' => sprintf(
+                    '<p class="comment-form-author"><label class="screen-reader-text" for="author">%1$s</label><input id="author" name="author" type="text" value="%2$s" placeholder="%1$s"%3$s></p>',
+                    esc_attr__( 'Name', 'theme-slug' ),
+                    esc_attr( $commenter['comment_author'] ),
+                    $comment_required ? ' required' : ''
+                ),
+                'email'  => sprintf(
+                    '<p class="comment-form-email"><label class="screen-reader-text" for="email">%1$s</label><input id="email" name="email" type="email" value="%2$s" placeholder="%1$s"%3$s></p>',
+                    esc_attr__( 'Email', 'theme-slug' ),
+                    esc_attr( $commenter['comment_author_email'] ),
+                    $comment_required ? ' required' : ''
+                ),
+                'url'    => sprintf(
+                    '<p class="comment-form-url"><label class="screen-reader-text" for="url">%1$s</label><input id="url" name="url" type="url" value="%2$s" placeholder="%1$s"></p>',
+                    esc_attr__( 'Website', 'theme-slug' ),
+                    esc_attr( $commenter['comment_author_url'] )
+                ),
+            ),
+        ) );
+    ?>
+
+</section><!-- #comments -->

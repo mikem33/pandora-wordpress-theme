@@ -5,10 +5,11 @@ const path = require('path');
 const chokidar = require('chokidar');
 
 const manifest = require('../manifest.json');
-const theme = manifest.theme;
+// The default identity. The wizard passes its own instead of writing it here.
+const defaultTheme = manifest.theme;
 
 // Import task modules
-const { copyThemeFiles, copyManifest, copyDevelopmentFiles } = require('./tasks/copy');
+const { copyThemeFiles, writeManifest, copyDevelopmentFiles } = require('./tasks/copy');
 const { replacePlaceholders } = require('./tasks/placeholders');
 const { checkTextdomain } = require('./tasks/textdomain');
 const { compileStyles } = require('./tasks/styles');
@@ -49,13 +50,13 @@ async function cleanBuild() {
 // BUILD ORCHESTRATION
 // =============================================================================
 
-async function runBuild() {
+async function runBuild(theme = defaultTheme) {
   try {
     log(`Starting build`);
 
     await cleanBuild();
     await copyThemeFiles(theme);
-    await copyManifest();
+    await writeManifest(theme);
     await copyDevelopmentFiles();
     await checkTextdomain(theme);
     await replacePlaceholders(theme);
@@ -73,7 +74,7 @@ async function runBuild() {
     log(`Build completed successfully!`);
   } catch (err) {
     logError(`Build failed: ${err.message}`);
-    process.exit(1);
+    throw err;
   }
 }
 
@@ -131,14 +132,14 @@ async function startWatch() {
 // MAIN
 // =============================================================================
 
-if (watchMode) {
-  startWatch().catch(err => {
-    logError(`Watch mode failed: ${err.message}`);
-    process.exit(1);
-  });
-} else {
-  runBuild().catch(err => {
-    logError(`Build failed: ${err.message}`);
-    process.exit(1);
-  });
+if (require.main === module) {
+  if (watchMode) {
+    startWatch().catch(() => process.exit(1));
+  } else {
+    runBuild().catch(() => process.exit(1));
+  }
 }
+
+module.exports = {
+  runBuild
+};

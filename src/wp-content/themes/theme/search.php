@@ -1,7 +1,7 @@
 <?php get_header(); ?>
     <div class="wrapper">
         <header>
-            <h1 class="page-title">Resultados de Búsqueda para &ldquo;<?php the_search_query(); ?>&rdquo;</h1>
+            <h1 class="page-title"><?php printf( esc_html__( 'Search results for “%s”', 'theme-slug' ), esc_html( get_search_query( false ) ) ); ?></h1>
         </header><!-- .page-title -->
             <?php if (have_posts()) : ?>
                 <?php while (have_posts()) : the_post(); ?>

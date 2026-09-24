@@ -26,8 +26,15 @@ async function copyThemeFiles(theme) {
   await copyDir(themeSrc, themeDest);
 }
 
-async function copyManifest() {
-  await copyFile(path.join(ROOT, 'manifest.json'), path.join(BUILD, 'manifest.json'));
+// The generated project gets its own manifest, with the identity it was built
+// with. The one in the repo root is only the default and is never touched.
+async function writeManifest(theme) {
+  const manifest = await fs.readJson(path.join(ROOT, 'manifest.json'));
+  const dest = path.join(BUILD, 'manifest.json');
+
+  await fs.ensureDir(BUILD);
+  await fs.writeJson(dest, { ...manifest, theme }, { spaces: 4 });
+  log(`Writing ${path.relative(ROOT, dest)}`);
 }
 
 // The generator (build.js, copy, placeholders, textdomain) stays behind: the
@@ -52,6 +59,6 @@ async function copyDevelopmentFiles() {
 
 module.exports = {
   copyThemeFiles,
-  copyManifest,
+  writeManifest,
   copyDevelopmentFiles
 };

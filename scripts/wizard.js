@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 
-// Asks for the theme details, writes them to manifest.json and generates it.
+// Asks for the theme details and generates the theme with them. Nothing is
+// written to this repo: the answers land in the generated project.
 
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('node:readline/promises');
-const { spawn } = require('child_process');
+
+const { runBuild } = require('./build');
 
 const ROOT = path.join(__dirname, '..');
-const MANIFEST = path.join(ROOT, 'manifest.json');
+// Whatever is left blank falls back to this, the repo's own manifest
+const DEFAULTS = path.join(ROOT, 'manifest.json');
 
 function slugify(value) {
   return value
@@ -30,17 +33,16 @@ async function ask(rl, label, fallback) {
 }
 
 async function main() {
-  const manifest = await fs.readJson(MANIFEST);
-  const current = manifest.theme;
+  const current = (await fs.readJson(DEFAULTS)).theme;
 
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
   console.log('\nTheme details. Press enter to keep the value in brackets.\n');
 
   const name = await ask(rl, 'Name', current.name);
-  const slug = slugify(await ask(rl, 'Slug', slugify(name)));
+  const slug = slugify(await ask(rl, 'Slug', current.slug));
   // PHP function names take no hyphens, hence a prefix of its own
-  const prefix = prefixify(await ask(rl, 'Prefix for PHP functions and asset handles', prefixify(slug)));
+  const prefix = prefixify(await ask(rl, 'Prefix for PHP functions and asset handles', current.prefix));
   const description = await ask(rl, 'Description', current.description);
   const author = await ask(rl, 'Author', current.author);
   const authorUri = await ask(rl, 'Author URL', current.author_uri);
@@ -52,11 +54,13 @@ async function main() {
   rl.close();
 
   if (confirm.trim().toLowerCase() === 'n') {
-    console.log('Cancelled. manifest.json was left untouched.');
+    console.log('Cancelled.');
     return;
   }
 
-  manifest.theme = {
+  // Nothing is written to the repo: the identity goes straight into the build,
+  // which writes it as the generated project's own manifest
+  await runBuild({
     slug,
     prefix,
     name,
@@ -64,13 +68,7 @@ async function main() {
     author,
     author_uri: authorUri,
     version
-  };
-
-  await fs.writeJson(MANIFEST, manifest, { spaces: 4 });
-  console.log('Written to manifest.json\n');
-
-  const build = spawn(process.execPath, [path.join(__dirname, 'build.js')], { stdio: 'inherit' });
-  build.on('exit', code => process.exit(code));
+  });
 }
 
 main().catch(err => {

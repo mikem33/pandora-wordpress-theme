@@ -3,7 +3,7 @@
     Metadata : Open Graph, Twitter Card, Dublin Core
     **/
 
-    function multi_metadata() {
+    function {{theme_prefix}}_meta_tags() {
         
         if ( ! is_404() ) {
             
@@ -69,5 +69,5 @@
             <?php }         
         }
     }
-    add_action( 'wp_head', 'multi_metadata' );
+    add_action( 'wp_head', '{{theme_prefix}}_meta_tags' );
 ?>
