@@ -8,16 +8,30 @@
     "description": "A heading, a line of text and a link. The reference block: copy the folder to start a new one.",
     "textdomain": "{{theme_slug}}",
     "attributes": {
-        "heading": { "type": "string", "default": "" },
-        "text": { "type": "string", "default": "" },
-        "buttonText": { "type": "string", "default": "" },
-        "buttonUrl": { "type": "string", "default": "" }
+        "heading": {
+            "type": "string",
+            "default": ""
+        },
+        "text": {
+            "type": "string",
+            "default": ""
+        },
+        "buttonText": {
+            "type": "string",
+            "default": ""
+        },
+        "buttonUrl": {
+            "type": "string",
+            "default": ""
+        }
     },
     "supports": {
         "html": false,
-        "align": ["wide", "full"]
+        "align": [
+            "wide",
+            "full"
+        ]
     },
-    "editorScript": "{{theme_slug}}-blocks-editor",
     "style": "file:./style.css",
     "render": "file:./render.php"
 }

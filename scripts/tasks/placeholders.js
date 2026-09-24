@@ -39,7 +39,7 @@ async function replaceInFiles(filePaths, theme) {
 async function filesWithPlaceholders(themeDir) {
   const entries = await fs.readdir(themeDir, { recursive: true });
   return entries
-    .filter(entry => entry.endsWith('.php') || entry.endsWith('block.json') || entry.endsWith(path.join('blocks', 'editor.js')))
+    .filter(entry => entry.endsWith('.php') || entry.endsWith('block.json') || (entry.startsWith('blocks') && entry.endsWith('.js')))
     .map(entry => path.join(themeDir, entry));
 }
 

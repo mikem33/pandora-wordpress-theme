@@ -5,19 +5,32 @@
      * where the block appears.
      */
     function {{theme_prefix}}_register_blocks() {
-        wp_register_script(
-            '{{theme_slug}}-blocks-editor',
-            get_stylesheet_directory_uri() . '/blocks/editor.js',
-            array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-components', 'wp-i18n' ),
-            wp_get_theme()->get( 'Version' ),
-            true
-        );
-
         foreach ( glob( get_stylesheet_directory() . '/blocks/*/block.json' ) as $block ) {
             register_block_type( dirname( $block ) );
         }
     }
     add_action( 'init', '{{theme_prefix}}_register_blocks' );
+
+    /**
+     * Each block's editor.js, enqueued with the WordPress packages it needs.
+     * Declaring them here rather than in block.json is what lets the script be
+     * plain JavaScript with no build step, and keeps a new block down to
+     * copying a folder.
+     */
+    function {{theme_prefix}}_enqueue_block_editors() {
+        foreach ( glob( get_stylesheet_directory() . '/blocks/*/editor.js' ) as $editor ) {
+            $name = basename( dirname( $editor ) );
+
+            wp_enqueue_script(
+                '{{theme_slug}}-block-' . $name,
+                get_stylesheet_directory_uri() . '/blocks/' . $name . '/editor.js',
+                array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-components', 'wp-i18n' ),
+                wp_get_theme()->get( 'Version' ),
+                true
+            );
+        }
+    }
+    add_action( 'enqueue_block_editor_assets', '{{theme_prefix}}_enqueue_block_editors' );
 
     /**
      * The theme's own category, so its blocks are not scattered among the
