@@ -5,6 +5,8 @@
 .*
 # track this file .gitignore (i.e. do NOT ignore it)
 !.gitignore
+# track the markers that keep a folder in place
+!.gitkeep
 !scripts/
 !package.json
 !pnpm-lock.yaml

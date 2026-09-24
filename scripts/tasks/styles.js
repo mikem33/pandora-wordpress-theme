@@ -75,32 +75,25 @@ async function compileBlockStyles(themeDir) {
 
   if (!await fs.pathExists(blocksDir)) return;
 
-  // Styles shared by the editor, not tied to any single block
-  const editorStyle = path.join(blocksDir, 'editor.styl');
-
-  if (await fs.pathExists(editorStyle)) {
-    await compileStylusFile(
-      editorStyle,
-      path.join(outputDir, 'editor.css'),
-      [path.join(themeDir, 'assets', 'css', 'styl')]
-    );
-  }
-
   const entries = await fs.readdir(blocksDir, { withFileTypes: true });
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
 
-    const inputFile = path.join(blocksDir, entry.name, 'style.styl');
-    if (!await fs.pathExists(inputFile)) continue;
-
     // The theme's styl folder goes in as a lookup path, so a block can import
     // the same utilities the main stylesheet uses
-    await compileStylusFile(
-      inputFile,
-      path.join(outputDir, `${entry.name}.css`),
-      [path.join(themeDir, 'assets', 'css', 'styl')]
-    );
+    const lookup = [path.join(themeDir, 'assets', 'css', 'styl')];
+
+    const style = path.join(blocksDir, entry.name, 'style.styl');
+    if (await fs.pathExists(style)) {
+      await compileStylusFile(style, path.join(outputDir, `${entry.name}.css`), lookup);
+    }
+
+    // Editor-only: it never reaches the front end
+    const editor = path.join(blocksDir, entry.name, 'editor.styl');
+    if (await fs.pathExists(editor)) {
+      await compileStylusFile(editor, path.join(outputDir, `${entry.name}-editor.css`), lookup);
+    }
   }
 }
 

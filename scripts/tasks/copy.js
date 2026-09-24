@@ -41,6 +41,7 @@ async function writeManifest(theme) {
 // generated project has no src/ to generate from, it compiles in place
 const THEME_TOOLCHAIN = [
   'theme.js',
+  'create-block.js',
   path.join('tasks', 'styles.js'),
   path.join('tasks', 'scripts.js'),
   path.join('tasks', 'sprites.js'),

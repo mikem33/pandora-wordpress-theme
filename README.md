@@ -60,6 +60,21 @@ The division of labour is deliberate: `theme.json` declares **what options
 exist**, because that is the only thing the editor cannot learn any other way,
 while **how things look** stays in the stylesheet.
 
+## Stylesheets for a single template
+
+`style.css` is loaded on every page. Anything that belongs to one template only
+goes in `assets/css/styl/pages/`, compiles to `assets/css/pages/` and is
+enqueued from `includes/css-enqueue.php`, which ships with a commented example
+to copy:
+
+```php
+if ( is_page_template( 'page-templates/template-home.php' ) ) {
+    wp_enqueue_style( 'theme-home-style', … );
+}
+```
+
+That way a landing page carries its own CSS and no other page pays for it.
+
 ## Blocks
 
 Each block lives in its own folder under the theme's `blocks/`:
@@ -74,9 +89,22 @@ blocks/
     style.styl         its stylesheet
 ```
 
-The theme registers whatever it finds there, so starting a block is copying the
-folder, renaming it in `block.json` and writing the three files. Nothing else
-needs editing.
+The theme registers whatever it finds there, so a block needs no wiring. To
+start one:
+
+```
+pnpm create-block
+```
+
+It asks for a title, a slug, an icon and a description, and writes the folder
+with the four files already filled in. It works both here and inside a
+generated project, where it uses that project's own slug.
+
+The icon is a [Dashicons](https://developer.wordpress.org/resource/dashicons/)
+name, which is the quickest way to get one. WordPress now draws its own block
+icons from SVG instead, so for a custom or brand icon, pass an SVG element as
+the `icon` in `registerBlockType` inside `editor.js` and drop the field from
+`block.json`.
 
 The blocks are dynamic: the front end comes from `render.php`, so the markup
 stays in PHP with the theme's own classes, and the editor side is plain
