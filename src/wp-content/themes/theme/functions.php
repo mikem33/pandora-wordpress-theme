@@ -7,5 +7,6 @@
     include_once(get_stylesheet_directory() .'/functions/body-classes.php');
     include_once(get_stylesheet_directory() .'/functions/acf-stuff.php');
     include_once(get_stylesheet_directory() .'/functions/meta-graph.php');
+    include_once(get_stylesheet_directory() .'/functions/comments.php');
     include_once(get_stylesheet_directory() .'/functions/livereload.php');
 ?>
