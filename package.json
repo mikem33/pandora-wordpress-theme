@@ -12,6 +12,7 @@
     "terser": "^5.19.4"
   },
   "scripts": {
+    "wizard": "node scripts/wizard.js",
     "build": "node scripts/build.js",
     "dev": "node scripts/build.js --watch",
     "test": "node scripts/build.js"
