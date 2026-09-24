@@ -11,28 +11,7 @@
             "custom": true,
             "defaultPalette": false,
             "defaultGradients": false,
-            "palette": [
-                {
-                    "slug": "dark-grey",
-                    "name": "Dark grey",
-                    "color": "#333333"
-                },
-                {
-                    "slug": "light-grey",
-                    "name": "Light grey",
-                    "color": "#666666"
-                },
-                {
-                    "slug": "white",
-                    "name": "White",
-                    "color": "#ffffff"
-                },
-                {
-                    "slug": "black",
-                    "name": "Black",
-                    "color": "#000000"
-                }
-            ]
+            "palette": []
         },
         "typography": {
             "fluid": false,
@@ -44,43 +23,7 @@
                     "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"
                 }
             ],
-            "fontSizes": [
-                {
-                    "slug": "text",
-                    "name": "Texto",
-                    "size": "clamp(1rem, 1vw, 1.125rem)"
-                },
-                {
-                    "slug": "zeta",
-                    "name": "Zeta",
-                    "size": "clamp(1.125rem, 2vw, 1.375rem)"
-                },
-                {
-                    "slug": "epsilon",
-                    "name": "Epsilon",
-                    "size": "clamp(1.25rem, 2vw, 1.5rem)"
-                },
-                {
-                    "slug": "delta",
-                    "name": "Delta",
-                    "size": "clamp(1.5rem, 2vw, 2rem)"
-                },
-                {
-                    "slug": "gamma",
-                    "name": "Gamma",
-                    "size": "clamp(1.75rem, 3vw, 2.625rem)"
-                },
-                {
-                    "slug": "beta",
-                    "name": "Beta",
-                    "size": "clamp(1.875rem, 4vw, 3.5rem)"
-                },
-                {
-                    "slug": "alpha",
-                    "name": "Alpha",
-                    "size": "clamp(2.1875rem, 5vw, 4.125rem)"
-                }
-            ]
+            "fontSizes": []
         },
         "spacing": {
             "units": [
@@ -92,28 +35,7 @@
                 "vh"
             ],
             "defaultSpacingSizes": false,
-            "spacingSizes": [
-                {
-                    "slug": "20",
-                    "name": "1",
-                    "size": "1rem"
-                },
-                {
-                    "slug": "40",
-                    "name": "2",
-                    "size": "1.875rem"
-                },
-                {
-                    "slug": "60",
-                    "name": "3",
-                    "size": "2.8125rem"
-                },
-                {
-                    "slug": "80",
-                    "name": "4",
-                    "size": "4rem"
-                }
-            ]
+            "spacingSizes": []
         }
     }
 }

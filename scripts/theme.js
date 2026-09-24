@@ -14,6 +14,7 @@ const theme = manifest.theme;
 const { compileStyles } = require('./tasks/styles');
 const { compileJavaScript } = require('./tasks/scripts');
 const { compileSvgSprites } = require('./tasks/sprites');
+const { generateThemeJson } = require('./tasks/theme-json');
 
 const ROOT = path.join(__dirname, '..');
 const THEME = path.join(ROOT, 'wp-content', 'themes', theme.slug);
@@ -39,7 +40,8 @@ async function compileTheme() {
     await Promise.all([
       compileStyles(THEME),
       compileJavaScript(THEME),
-      compileSvgSprites(THEME)
+      compileSvgSprites(THEME),
+      generateThemeJson(THEME)
     ]);
 
     log(`Done`);
