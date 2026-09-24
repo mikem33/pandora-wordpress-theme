@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 
-// Asks for the theme details, writes them to manifest.json and generates it.
+// Asks for the theme details and generates the theme with them. Nothing is
+// written to this repo: the answers land in the generated project.
 
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('node:readline/promises');
-const { spawn } = require('child_process');
+
+const { runBuild } = require('./build');
 
 const ROOT = path.join(__dirname, '..');
-const MANIFEST = path.join(ROOT, 'manifest.json');
+const DEFAULTS = path.join(ROOT, 'manifest.json');
+// What the last generated theme answered, so regenerating it is all enters
+const PREVIOUS = path.join(ROOT, 'build', 'manifest.json');
 
 function slugify(value) {
   return value
@@ -30,8 +34,8 @@ async function ask(rl, label, fallback) {
 }
 
 async function main() {
-  const manifest = await fs.readJson(MANIFEST);
-  const current = manifest.theme;
+  const source = await fs.pathExists(PREVIOUS) ? PREVIOUS : DEFAULTS;
+  const current = (await fs.readJson(source)).theme;
 
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
@@ -52,11 +56,13 @@ async function main() {
   rl.close();
 
   if (confirm.trim().toLowerCase() === 'n') {
-    console.log('Cancelled. manifest.json was left untouched.');
+    console.log('Cancelled.');
     return;
   }
 
-  manifest.theme = {
+  // Nothing is written to the repo: the identity goes straight into the build,
+  // which writes it as the generated project's own manifest
+  await runBuild({
     slug,
     prefix,
     name,
@@ -64,13 +70,7 @@ async function main() {
     author,
     author_uri: authorUri,
     version
-  };
-
-  await fs.writeJson(MANIFEST, manifest, { spaces: 4 });
-  console.log('Written to manifest.json\n');
-
-  const build = spawn(process.execPath, [path.join(__dirname, 'build.js')], { stdio: 'inherit' });
-  build.on('exit', code => process.exit(code));
+  });
 }
 
 main().catch(err => {
