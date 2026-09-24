@@ -68,8 +68,8 @@ enqueued from `includes/css-enqueue.php`, which ships with a commented example
 to copy:
 
 ```php
-if ( is_page_template( 'page-templates/template-custom-blocks.php' ) ) {
-    wp_enqueue_style( 'theme-custom-blocks-style', … );
+if ( is_page_template( 'page-templates/template-home.php' ) ) {
+    wp_enqueue_style( 'theme-home-style', … );
 }
 ```
 
