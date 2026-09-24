@@ -10,9 +10,8 @@ const readline = require('node:readline/promises');
 const { runBuild } = require('./build');
 
 const ROOT = path.join(__dirname, '..');
+// Whatever is left blank falls back to this, the repo's own manifest
 const DEFAULTS = path.join(ROOT, 'manifest.json');
-// What the last generated theme answered, so regenerating it is all enters
-const PREVIOUS = path.join(ROOT, 'build', 'manifest.json');
 
 function slugify(value) {
   return value
@@ -34,17 +33,16 @@ async function ask(rl, label, fallback) {
 }
 
 async function main() {
-  const source = await fs.pathExists(PREVIOUS) ? PREVIOUS : DEFAULTS;
-  const current = (await fs.readJson(source)).theme;
+  const current = (await fs.readJson(DEFAULTS)).theme;
 
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
   console.log('\nTheme details. Press enter to keep the value in brackets.\n');
 
   const name = await ask(rl, 'Name', current.name);
-  const slug = slugify(await ask(rl, 'Slug', slugify(name)));
+  const slug = slugify(await ask(rl, 'Slug', current.slug));
   // PHP function names take no hyphens, hence a prefix of its own
-  const prefix = prefixify(await ask(rl, 'Prefix for PHP functions and asset handles', prefixify(slug)));
+  const prefix = prefixify(await ask(rl, 'Prefix for PHP functions and asset handles', current.prefix));
   const description = await ask(rl, 'Description', current.description);
   const author = await ask(rl, 'Author', current.author);
   const authorUri = await ask(rl, 'Author URL', current.author_uri);
