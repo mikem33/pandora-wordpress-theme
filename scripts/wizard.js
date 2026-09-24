@@ -20,6 +20,10 @@ function slugify(value) {
     .replace(/^-+|-+$/g, '');
 }
 
+function prefixify(value) {
+  return slugify(value).replace(/-/g, '_');
+}
+
 async function ask(rl, label, fallback) {
   const answer = await rl.question(`${label} [${fallback}]: `);
   return answer.trim() || fallback;
@@ -35,6 +39,8 @@ async function main() {
 
   const name = await ask(rl, 'Name', current.name);
   const slug = slugify(await ask(rl, 'Slug', slugify(name)));
+  // PHP function names take no hyphens, hence a prefix of its own
+  const prefix = prefixify(await ask(rl, 'Prefix for PHP functions and asset handles', prefixify(slug)));
   const description = await ask(rl, 'Description', current.description);
   const author = await ask(rl, 'Author', current.author);
   const authorUri = await ask(rl, 'Author URL', current.author_uri);
@@ -52,6 +58,7 @@ async function main() {
 
   manifest.theme = {
     slug,
+    prefix,
     name,
     description,
     author,
