@@ -15,6 +15,13 @@
     }
 
     /**
+     * Load the theme stylesheet inside the block editor, so a block looks the
+     * same there as it does on the front.
+     */
+    add_theme_support( 'editor-styles' );
+    add_editor_style( 'style.css' );
+
+    /**
      * Function for activate thumbnails and size.
      */
     add_theme_support( 'post-thumbnails' );
