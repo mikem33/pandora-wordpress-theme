@@ -7,7 +7,7 @@
             <meta name="description" content="<?php bloginfo( 'description' ); ?>">
         <?php elseif ( is_single() ) : ?>
             <title><?php wp_title('-',true,'right'); ?><?php bloginfo('name'); ?></title>
-            <meta name="description" content="<?php meta_description(); ?>">
+            <meta name="description" content="<?php {{theme_prefix}}_meta_description(); ?>">
         <?php else : ?>
             <title><?php wp_title('-',true,'right'); ?><?php bloginfo('name'); ?></title>
             <meta name="description" content="<?php bloginfo( 'description' ); ?>">
