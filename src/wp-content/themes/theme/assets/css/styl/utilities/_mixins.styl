@@ -3,19 +3,6 @@
     $Mixins
 
 \* ---------------------------- */
-// $theme.json tokens. The slug goes quoted: bare words like white are read as colors.
-fontsize($slug)
-    return s('var(--wp--preset--font-size--%s)', unquote($slug))
-
-lineheight($slug)
-    return s('var(--wp--custom--line-height--%s)', unquote($slug))
-
-palette($slug)
-    return s('var(--wp--preset--color--%s)', unquote($slug))
-
-spacing($slug)
-    return s('var(--wp--preset--spacing--%s)', unquote($slug))
-
 // $Remify
 rem($value)
     return unit($value/16, 'rem')
