@@ -1,6 +1,6 @@
 {
     "name": "pandora-wordpress-theme",
-    "version": "3.0.0-beta.2",
+    "version": "3.0.0",
     "description": "Base Custom Wordpress Theme for developing sites.",
     "packageManager": "pnpm@12.6.0",
     "dependencies": {
