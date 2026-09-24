@@ -75,6 +75,17 @@ async function compileBlockStyles(themeDir) {
 
   if (!await fs.pathExists(blocksDir)) return;
 
+  // Styles shared by the editor, not tied to any single block
+  const editorStyle = path.join(blocksDir, 'editor.styl');
+
+  if (await fs.pathExists(editorStyle)) {
+    await compileStylusFile(
+      editorStyle,
+      path.join(outputDir, 'editor.css'),
+      [path.join(themeDir, 'assets', 'css', 'styl')]
+    );
+  }
+
   const entries = await fs.readdir(blocksDir, { withFileTypes: true });
 
   for (const entry of entries) {
