@@ -8,6 +8,7 @@
     var useBlockProps = blockEditor.useBlockProps;
     var RichText = blockEditor.RichText;
     var InspectorControls = blockEditor.InspectorControls;
+    var URLInput = blockEditor.URLInput;
     var __ = i18n.__;
 
     blocks.registerBlockType( '{{theme_slug}}/button', {
@@ -24,13 +25,24 @@
                     el(
                         components.PanelBody,
                         { title: __( 'Link', '{{theme_slug}}' ) },
-                        el( components.TextControl, {
-                            label: __( 'URL', '{{theme_slug}}' ),
-                            value: attributes.url,
-                            onChange: function ( value ) {
-                                setAttributes( { url: value } );
-                            }
-                        } ),
+                        // URLInput suggests the site's own pages and posts as
+                        // you type their name, and takes a plain URL too
+                        el(
+                            components.BaseControl,
+                            {
+                                id: 'url-' + props.clientId,
+                                label: __( 'URL', '{{theme_slug}}' ),
+                                __nextHasNoMarginBottom: true
+                            },
+                            el( URLInput, {
+                                id: 'url-' + props.clientId,
+                                value: attributes.url,
+                                onChange: function ( url ) {
+                                    setAttributes( { url: url } );
+                                },
+                                __nextHasNoMarginBottom: true
+                            } )
+                        ),
                         el( components.ToggleControl, {
                             label: __( 'Open in a new tab', '{{theme_slug}}' ),
                             checked: attributes.opensInNewTab,
