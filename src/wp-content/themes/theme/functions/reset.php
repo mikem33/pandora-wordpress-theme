@@ -28,4 +28,28 @@
     // Core enqueues the stylesheet in both places, hence the two hooks.
     add_action( 'wp_enqueue_scripts', '{{theme_prefix}}_global_styles_without_important', 20 );
     add_action( 'wp_footer', '{{theme_prefix}}_global_styles_without_important', 5 );
+
+    // WordPress declares its own palette, gradients, duotones, shadows, sizes
+    // and aspect ratios, and writes every one of them into the global
+    // stylesheet. Setting defaultPalette to false in theme.json only hides them
+    // from the editor, so they are dropped here, at the source, before the
+    // merge. The theme's own presets, declared in tokens.json, are untouched.
+    function {{theme_prefix}}_trim_default_presets( $theme_json ) {
+        $data = $theme_json->get_data();
+
+        unset(
+            $data['settings']['color']['palette'],
+            $data['settings']['color']['gradients'],
+            $data['settings']['color']['duotone'],
+            $data['settings']['typography']['fontSizes'],
+            $data['settings']['spacing']['spacingSizes'],
+            $data['settings']['shadow']['presets'],
+            $data['settings']['dimensions']['aspectRatios']
+        );
+
+        // A new object, not update_with(): that one merges, and a merge can
+        // add or overwrite but never remove
+        return new WP_Theme_JSON_Data( $data, 'default' );
+    }
+    add_filter( 'wp_theme_json_data_default', '{{theme_prefix}}_trim_default_presets' );
 ?>
