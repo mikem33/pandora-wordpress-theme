@@ -12,7 +12,7 @@ function logError(message) {
   console.error(`[ERROR] ${message}`);
 }
 
-async function compileStylusFile(inputPath, outputPath) {
+async function compileStylusFile(inputPath, outputPath, extraPaths = []) {
   const content = await fs.readFile(inputPath, 'utf-8');
 
   return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ async function compileStylusFile(inputPath, outputPath) {
       .set('compress', true)
       .set('include css', true)
       .set('sourcemap', { comment: true })
-      .set('paths', [path.dirname(inputPath)]);
+      .set('paths', [path.dirname(inputPath), ...extraPaths]);
 
     renderer.render(async (err, css) => {
       if (err) {
@@ -67,10 +67,48 @@ async function compilePageStyles(themeDir) {
   }
 }
 
+// A block's source lives in its own folder; its CSS lands with the rest of the
+// compiled stylesheets, next to the ones of the pages
+async function compileBlockStyles(themeDir) {
+  const blocksDir = path.join(themeDir, 'blocks');
+  const outputDir = path.join(themeDir, 'assets', 'css', 'blocks');
+
+  if (!await fs.pathExists(blocksDir)) return;
+
+  // Styles shared by the editor, not tied to any single block
+  const editorStyle = path.join(blocksDir, 'editor.styl');
+
+  if (await fs.pathExists(editorStyle)) {
+    await compileStylusFile(
+      editorStyle,
+      path.join(outputDir, 'editor.css'),
+      [path.join(themeDir, 'assets', 'css', 'styl')]
+    );
+  }
+
+  const entries = await fs.readdir(blocksDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+
+    const inputFile = path.join(blocksDir, entry.name, 'style.styl');
+    if (!await fs.pathExists(inputFile)) continue;
+
+    // The theme's styl folder goes in as a lookup path, so a block can import
+    // the same utilities the main stylesheet uses
+    await compileStylusFile(
+      inputFile,
+      path.join(outputDir, `${entry.name}.css`),
+      [path.join(themeDir, 'assets', 'css', 'styl')]
+    );
+  }
+}
+
 async function compileStyles(themeDir) {
   log(`Compiling stylesheets`);
   await compileMainStyle(themeDir);
   await compilePageStyles(themeDir);
+  await compileBlockStyles(themeDir);
 }
 
 module.exports = {

@@ -35,10 +35,11 @@ async function replaceInFiles(filePaths, theme) {
   }
 }
 
-async function phpFiles(themeDir) {
+// The PHP of the theme, plus what the blocks declare about themselves
+async function filesWithPlaceholders(themeDir) {
   const entries = await fs.readdir(themeDir, { recursive: true });
   return entries
-    .filter(entry => entry.endsWith('.php'))
+    .filter(entry => entry.endsWith('.php') || entry.endsWith('block.json') || (entry.startsWith('blocks') && entry.endsWith('.js')))
     .map(entry => path.join(themeDir, entry));
 }
 
@@ -55,7 +56,7 @@ async function replacePlaceholders(theme) {
     path.join(themeBuild, 'assets', 'css', 'styl', 'style.styl'),
     path.join(BUILD, 'manifest.json'),
     path.join(BUILD, 'package.json'),
-    ...await phpFiles(themeBuild)
+    ...await filesWithPlaceholders(themeBuild)
   ];
 
   await replaceInFiles(filesToReplace, theme);

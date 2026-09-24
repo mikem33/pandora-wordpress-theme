@@ -52,6 +52,32 @@ async function compileJavaScript(themeDir) {
   log(`Compiled JavaScript → ${path.relative(ROOT, outputFile)}`);
 }
 
+// Each block's editor script, minified next to the theme's other JavaScript
+async function compileBlockScripts(themeDir) {
+  const blocksDir = path.join(themeDir, 'blocks');
+  const outputDir = path.join(themeDir, 'assets', 'javascript', 'blocks');
+
+  if (!await fs.pathExists(blocksDir)) return;
+
+  const entries = await fs.readdir(blocksDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+
+    const inputFile = path.join(blocksDir, entry.name, 'editor.js');
+    if (!await fs.pathExists(inputFile)) continue;
+
+    const source = await fs.readFile(inputFile, 'utf-8');
+    const result = await minify(source);
+    const outputFile = path.join(outputDir, `${entry.name}.js`);
+
+    await fs.ensureDir(outputDir);
+    await fs.writeFile(outputFile, result.code, 'utf-8');
+    log(`Compiled ${path.relative(ROOT, inputFile)} → ${path.relative(ROOT, outputFile)}`);
+  }
+}
+
 module.exports = {
-  compileJavaScript
+  compileJavaScript,
+  compileBlockScripts
 };
