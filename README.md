@@ -60,6 +60,21 @@ The division of labour is deliberate: `theme.json` declares **what options
 exist**, because that is the only thing the editor cannot learn any other way,
 while **how things look** stays in the stylesheet.
 
+## Stylesheets for a single template
+
+`style.css` is loaded on every page. Anything that belongs to one template only
+goes in `assets/css/styl/pages/`, compiles to `assets/css/pages/` and is
+enqueued from `includes/css-enqueue.php`, which ships with a commented example
+to copy:
+
+```php
+if ( is_page_template( 'page-templates/template-custom-blocks.php' ) ) {
+    wp_enqueue_style( 'theme-custom-blocks-style', … );
+}
+```
+
+That way a landing page carries its own CSS and no other page pays for it.
+
 ## Blocks
 
 Each block lives in its own folder under the theme's `blocks/`:
