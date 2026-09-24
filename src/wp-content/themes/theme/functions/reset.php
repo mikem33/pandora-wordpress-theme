@@ -52,4 +52,9 @@
         return new WP_Theme_JSON_Data( $data, 'default' );
     }
     add_filter( 'wp_theme_json_data_default', '{{theme_prefix}}_trim_default_presets' );
+
+    // WordPress inlines any stylesheet below 20 KB, so core's block CSS is
+    // repeated in the HTML of every page. As files they are fetched once and
+    // cached for the rest of the visit.
+    add_filter( 'styles_inline_size_limit', '__return_zero' );
 ?>
