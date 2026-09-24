@@ -1,30 +1,29 @@
 {
-  "name": "pandora-wordpress-theme",
-  "version": "3.0.0-beta.2",
-  "description": "Base Custom Wordpress Theme for developing sites.",
-  "packageManager": "pnpm@12.6.0",
-  "dependencies": {
-    "fs-extra": "^8.1.0"
-  },
-  "devDependencies": {
-    "chokidar": "^3.5.3",
-    "stylus": "^0.56.0",
-    "terser": "^5.19.4"
-  },
-  "scripts": {
-    "wizard": "node scripts/wizard.js",
-    "build": "node scripts/build.js",
-    "dev": "node scripts/build.js --watch",
-    "test": "node scripts/build.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mikem33/pandora-wordpress-theme.git"
-  },
-  "author": "Miguel Morera",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mikem33/pandora-wordpress-theme/issues"
-  },
-  "homepage": "https://github.com/mikem33/pandora-wordpress-theme#readme"
+    "name": "pandora-wordpress-theme",
+    "version": "3.0.0-beta.2",
+    "description": "Base Custom Wordpress Theme for developing sites.",
+    "packageManager": "pnpm@12.6.0",
+    "dependencies": {
+        "fs-extra": "^8.1.0"
+    },
+    "devDependencies": {
+        "chokidar": "^3.5.3",
+        "stylus": "^0.56.0",
+        "terser": "^5.19.4"
+    },
+    "scripts": {
+        "wizard": "node scripts/wizard.js",
+        "build": "node scripts/build.js",
+        "dev": "node scripts/build.js --watch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mikem33/pandora-wordpress-theme.git"
+    },
+    "author": "Miguel Morera",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mikem33/pandora-wordpress-theme/issues"
+    },
+    "homepage": "https://github.com/mikem33/pandora-wordpress-theme#readme"
 }

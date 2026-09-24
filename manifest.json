@@ -7,9 +7,5 @@
         "author": "Miguel Morera",
         "author_uri": "https://www.miguelmorera.com",
         "version": "2.0.1"
-    },
-    "requires": {
-        "css": {},
-        "js": {}
     }
 }
