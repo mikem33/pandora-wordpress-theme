@@ -67,9 +67,11 @@ async function compilePageStyles(themeDir) {
   }
 }
 
-// Each block keeps its CSS next to it, which is what block.json points at
+// A block's source lives in its own folder; its CSS lands with the rest of the
+// compiled stylesheets, next to the ones of the pages
 async function compileBlockStyles(themeDir) {
   const blocksDir = path.join(themeDir, 'blocks');
+  const outputDir = path.join(themeDir, 'assets', 'css', 'blocks');
 
   if (!await fs.pathExists(blocksDir)) return;
 
@@ -85,7 +87,7 @@ async function compileBlockStyles(themeDir) {
     // the same utilities the main stylesheet uses
     await compileStylusFile(
       inputFile,
-      path.join(blocksDir, entry.name, 'style.css'),
+      path.join(outputDir, `${entry.name}.css`),
       [path.join(themeDir, 'assets', 'css', 'styl')]
     );
   }
