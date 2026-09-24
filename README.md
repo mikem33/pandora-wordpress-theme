@@ -60,6 +60,34 @@ The division of labour is deliberate: `theme.json` declares **what options
 exist**, because that is the only thing the editor cannot learn any other way,
 while **how things look** stays in the stylesheet.
 
+## Blocks
+
+Each block lives in its own folder under the theme's `blocks/`:
+
+```
+blocks/
+  editor.styl          editor-only styles, never served to the front
+  button/
+    block.json         name, attributes, category
+    render.php         the front end markup
+    editor.js          the editor controls
+    style.styl         its stylesheet
+```
+
+The theme registers whatever it finds there, so starting a block is copying the
+folder, renaming it in `block.json` and writing the three files. Nothing else
+needs editing.
+
+The blocks are dynamic: the front end comes from `render.php`, so the markup
+stays in PHP with the theme's own classes, and the editor side is plain
+JavaScript. There is no JSX and nothing to compile for it.
+
+`style.styl` compiles to `assets/css/blocks/<block>.css` and is served only on
+the pages where the block is used. `editor.js` is minified to
+`assets/javascript/blocks/<block>.js`. A block's stylesheet can import
+`utilities/utilities`, which is how it reaches the same tokens as the rest of
+the theme.
+
 ## Layout of this repo
 
 ```
@@ -75,6 +103,7 @@ src/
   wp-content/themes/theme/
     tokens.json        colours, type scale, spacing
     theme.json         the catalogue the block editor reads
+    blocks/            one folder per block
     assets/css/styl/   Stylus sources
     assets/javascript/compile/   JavaScript, concatenated in alphabetical order
 build/                 the generated theme. Not versioned: rebuild it
