@@ -149,6 +149,19 @@ a
 
 // $States
 
+// Visible to screen readers only. Not display:none, which would hide it from
+// them too
+.screen-reader-text
+    width 1px
+    height 1px
+    border 0
+    padding 0
+    margin -1px
+    overflow hidden
+    position absolute
+    white-space nowrap
+    clip-path inset(50%)
+
 .nondisplayed
     display none
 
