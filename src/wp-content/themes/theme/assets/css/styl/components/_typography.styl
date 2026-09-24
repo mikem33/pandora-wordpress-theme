@@ -4,27 +4,29 @@
 
 \* ---------------------------- */
 
-p, li
-    font-size "clamp(%s, 1vw, %s)" % (rem(16) rem(18))
+// The size of each tag comes from theme.json, so the editor and the front
+// never drift apart. These classes apply the same scale to any other element.
+
 h1, h2, h3, h4, h5, h6
     text-wrap balance
 h1, h2, h3, h4, h5, h6, p
     margin-top 0
-h1, .alpha
-    font-size "clamp(%s, 5vw, %s)" % (rem(35) rem(66))
-    line-height "clamp(%s, 5vw, %s)" % (rem(38) rem(66))
-h2, .beta
-    font-size "clamp(%s, 4vw, %s)" % (rem(30) rem(56))
-    line-height "clamp(%s, 4vw, %s)" % (rem(32) rem(56))
-h3, .gamma
-    font-size "clamp(%s, 3vw, %s)" % (rem(28) rem(42))
-    line-height "clamp(%s, 3vw, %s)" % (rem(30) rem(42))
-h4, .delta
-    font-size "clamp(%s, 2vw, %s)" % (rem(24) rem(32))
-    line-height "clamp(%s, 2vw, %s)" % (rem(26) rem(32))
-h5, .epsilon
-    font-size "clamp(%s, 2vw, %s)" % (rem(20) rem(24))
-    line-height "clamp(%s, 2vw, %s)" % (rem(24) rem(28))
-h6, .zeta
-    font-size "clamp(%s, 2vw, %s)" % (rem(18) rem(22))
-    line-height "clamp(%s, 2vw, %s)" % (rem(20) rem(26))
+
+.alpha
+    font-size fontsize('alpha')
+    line-height lineheight('alpha')
+.beta
+    font-size fontsize('beta')
+    line-height lineheight('beta')
+.gamma
+    font-size fontsize('gamma')
+    line-height lineheight('gamma')
+.delta
+    font-size fontsize('delta')
+    line-height lineheight('delta')
+.epsilon
+    font-size fontsize('epsilon')
+    line-height lineheight('epsilon')
+.zeta
+    font-size fontsize('zeta')
+    line-height lineheight('zeta')
