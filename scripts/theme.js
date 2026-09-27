@@ -11,7 +11,7 @@ const chokidar = require('chokidar');
 const manifest = require('../manifest.json');
 const theme = manifest.theme;
 
-const { compileStyles } = require('./tasks/styles');
+const { compileStyles } = require('./tasks/css');
 const { bundleJavaScript, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
@@ -38,7 +38,7 @@ async function compileTheme() {
     log(`Compiling ${theme.name}`);
 
     await Promise.all([
-      compileStyles(THEME),
+      compileStyles(THEME, theme),
       bundleJavaScript(THEME),
       bundleBlockScripts(THEME),
       compileSvgSprites(THEME),

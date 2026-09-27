@@ -12,7 +12,7 @@ const defaultTheme = manifest.theme;
 const { copyThemeFiles, writeManifest, copyDevelopmentFiles } = require('./tasks/copy');
 const { replacePlaceholders } = require('./tasks/placeholders');
 const { checkTextdomain } = require('./tasks/textdomain');
-const { compileStyles } = require('./tasks/styles');
+const { compileStyles } = require('./tasks/css');
 const { bundleJavaScript, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
@@ -65,7 +65,7 @@ async function runBuild(theme = defaultTheme) {
 
     // Run styles and scripts in parallel
     await Promise.all([
-      compileStyles(themeDir),
+      compileStyles(themeDir, theme),
       bundleJavaScript(themeDir),
       bundleBlockScripts(themeDir),
       compileSvgSprites(themeDir),

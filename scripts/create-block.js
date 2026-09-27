@@ -111,7 +111,7 @@ function styleStyl(slug, title) {
 
 \\* ---------------------------- */
 
-@import 'utilities/utilities'
+@import '../../assets/css/styl/utilities/utilities'
 
 .${slug}
     // The theme's variables and mixins are available here
