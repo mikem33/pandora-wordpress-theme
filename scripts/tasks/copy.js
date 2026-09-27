@@ -43,7 +43,7 @@ const THEME_TOOLCHAIN = [
   'theme.js',
   'create-block.js',
   path.join('tasks', 'styles.js'),
-  path.join('tasks', 'scripts.js'),
+  path.join('tasks', 'bundle.js'),
   path.join('tasks', 'sprites.js'),
   path.join('tasks', 'theme-json.js')
 ];

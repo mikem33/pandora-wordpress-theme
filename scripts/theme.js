@@ -12,7 +12,7 @@ const manifest = require('../manifest.json');
 const theme = manifest.theme;
 
 const { compileStyles } = require('./tasks/styles');
-const { compileJavaScript, compileBlockScripts } = require('./tasks/scripts');
+const { bundleJavaScript, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
 
@@ -39,8 +39,8 @@ async function compileTheme() {
 
     await Promise.all([
       compileStyles(THEME),
-      compileJavaScript(THEME),
-      compileBlockScripts(THEME),
+      bundleJavaScript(THEME),
+      bundleBlockScripts(THEME),
       compileSvgSprites(THEME),
       generateThemeJson(THEME)
     ]);
