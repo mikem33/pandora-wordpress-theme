@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const crypto = require('crypto');
 
+const { vendorDependencies } = require('./vendor');
+
 const ROOT = path.join(__dirname, '..', '..');
 
 function log(message) {
@@ -17,18 +19,24 @@ async function fingerprint(file) {
   return crypto.createHash('sha256').update(contents).digest('hex').slice(0, 12);
 }
 
-// entries maps a logical name to the file's path inside the theme
+// entries maps a logical name to the file's path inside the theme, or to an
+// object with that path and the libraries the file imported. Those become deps,
+// the logical names of the library files the PHP loads first.
 async function writeAssetsManifest(themeDir, entries) {
   const manifest = {};
 
-  for (const [name, file] of Object.entries(entries).sort()) {
+  for (const [name, entry] of Object.entries(entries).sort()) {
+    const file = typeof entry === 'object' ? entry.file : entry;
     const absolute = path.join(themeDir, file);
 
     if (!await fs.pathExists(absolute)) continue;
 
+    const deps = typeof entry === 'object' ? vendorDependencies(entry) : [];
+
     manifest[name] = {
       file,
-      version: await fingerprint(absolute)
+      version: await fingerprint(absolute),
+      ...(deps.length ? { deps } : {})
     };
   }
 

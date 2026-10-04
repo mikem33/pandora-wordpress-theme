@@ -1,6 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const { collectStylesheetImports } = require('./vendor');
+
 const ROOT = path.join(__dirname, '..', '..');
 
 function log(message) {
@@ -33,13 +35,18 @@ function themeHeader(theme) {
 //
 // No sourcemaps: Vite emits none for a CSS-only entry, neither as a file nor
 // inlined. They come back in development once the dev server serves the CSS.
+//
+// Returns the library stylesheets it @imported, which are left out of it and
+// emitted once on their own. Stylus runs on the main thread for that: in a
+// worker the import would never be seen.
 async function compileStylesheet(themeDir, entry, outDir, fileName) {
   const { build } = require('vite');
 
-  await build({
+  const styles = await collectStylesheetImports(themeDir, () => build({
     root: themeDir,
     configFile: viteConfig(themeDir),
     logLevel: 'warn',
+    css: { preprocessorMaxWorkers: 0 },
     build: {
       outDir,
       emptyOutDir: false,
@@ -49,9 +56,11 @@ async function compileStylesheet(themeDir, entry, outDir, fileName) {
         output: { assetFileNames: fileName }
       }
     }
-  });
+  }));
 
   log(`Compiled ${entry.replace(/^\//, '')} → ${path.posix.join(outDir === '.' ? '' : outDir, fileName)}`);
+
+  return styles;
 }
 
 // style.css has to sit at the theme root, which is where WordPress reads the
@@ -61,7 +70,7 @@ async function compileStylesheet(themeDir, entry, outDir, fileName) {
 async function compileMainStyle(themeDir, theme) {
   const staging = path.posix.join('assets', 'css', '.build');
 
-  await compileStylesheet(themeDir, '/assets/css/styl/style.styl', staging, 'style.css');
+  const styles = await compileStylesheet(themeDir, '/assets/css/styl/style.styl', staging, 'style.css');
 
   const built = path.join(themeDir, staging, 'style.css');
   const stylesheet = path.join(themeDir, 'style.css');
@@ -69,7 +78,7 @@ async function compileMainStyle(themeDir, theme) {
   await fs.writeFile(stylesheet, themeHeader(theme) + await fs.readFile(built, 'utf-8'), 'utf-8');
   await fs.remove(path.join(themeDir, staging));
 
-  return { 'theme.css': 'style.css' };
+  return { 'theme.css': { file: 'style.css', styles } };
 }
 
 // A .styl sitting at the root of styl/ is a stylesheet of its own, compiled to
@@ -84,14 +93,14 @@ async function compileRootStyles(themeDir) {
 
     const name = file.replace(/\.styl$/, '');
 
-    await compileStylesheet(
+    const styles = await compileStylesheet(
       themeDir,
       '/' + path.posix.join('assets', 'css', 'styl', file),
       path.posix.join('assets', 'css'),
       `${name}.css`
     );
 
-    entries[`${name}.css`] = path.posix.join('assets', 'css', `${name}.css`);
+    entries[`${name}.css`] = { file: path.posix.join('assets', 'css', `${name}.css`), styles };
   }
 
   return entries;
@@ -108,14 +117,14 @@ async function compilePageStyles(themeDir) {
 
     const name = file.replace(/\.styl$/, '');
 
-    await compileStylesheet(
+    const styles = await compileStylesheet(
       themeDir,
       '/' + path.posix.join('assets', 'css', 'styl', 'pages', file),
       path.posix.join('assets', 'css', 'pages'),
       `${name}.css`
     );
 
-    entries[`page.${name}.css`] = path.posix.join('assets', 'css', 'pages', `${name}.css`);
+    entries[`page.${name}.css`] = { file: path.posix.join('assets', 'css', 'pages', `${name}.css`), styles };
   }
 
   return entries;
@@ -136,7 +145,7 @@ async function compileBlockStyles(themeDir) {
     for (const [source, suffix] of [['style.styl', ''], ['editor.styl', '-editor']]) {
       if (!await fs.pathExists(path.join(blocksDir, entry.name, source))) continue;
 
-      await compileStylesheet(
+      const styles = await compileStylesheet(
         themeDir,
         '/' + path.posix.join('blocks', entry.name, source),
         outDir,
@@ -144,7 +153,7 @@ async function compileBlockStyles(themeDir) {
       );
 
       const name = suffix ? `block.${entry.name}.editor.css` : `block.${entry.name}.css`;
-      entries[name] = path.posix.join(outDir, `${entry.name}${suffix}.css`);
+      entries[name] = { file: path.posix.join(outDir, `${entry.name}${suffix}.css`), styles };
     }
   }
 

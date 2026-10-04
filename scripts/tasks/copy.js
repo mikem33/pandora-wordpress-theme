@@ -46,7 +46,8 @@ const THEME_TOOLCHAIN = [
   path.join('tasks', 'bundle.js'),
   path.join('tasks', 'sprites.js'),
   path.join('tasks', 'theme-json.js'),
-  path.join('tasks', 'assets.js')
+  path.join('tasks', 'assets.js'),
+  path.join('tasks', 'vendor.js')
 ];
 
 async function copyDevelopmentFiles() {
