@@ -17,6 +17,7 @@ const { bundleJavaScript, bundlePageScripts, bundleBlockScripts } = require('./t
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
 const { writeAssetsManifest } = require('./tasks/assets');
+const { buildVendors } = require('./tasks/vendor');
 
 const ROOT = path.join(__dirname, '..');
 const BUILD = path.join(ROOT, 'build');
@@ -76,7 +77,13 @@ async function runBuild(theme = defaultTheme) {
 
     // What the PHP asks for by name, with a fingerprint so a changed file is a
     // changed URL
-    await writeAssetsManifest(themeDir, Object.assign({}, ...produced));
+    const entries = Object.assign({}, ...produced);
+
+    // The libraries the scripts and stylesheets imported, once each, now that
+    // they have all said which
+    Object.assign(entries, await buildVendors(themeDir, entries));
+
+    await writeAssetsManifest(themeDir, entries);
 
     log(`Build completed successfully!`);
   } catch (err) {

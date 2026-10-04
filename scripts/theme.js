@@ -16,6 +16,7 @@ const { bundleJavaScript, bundlePageScripts, bundleBlockScripts } = require('./t
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
 const { writeAssetsManifest } = require('./tasks/assets');
+const { buildVendors } = require('./tasks/vendor');
 
 const ROOT = path.join(__dirname, '..');
 const THEME = path.join(ROOT, 'wp-content', 'themes', theme.slug);
@@ -49,7 +50,13 @@ async function compileTheme() {
 
     // What the PHP asks for by name, with a fingerprint so a changed file is a
     // changed URL
-    await writeAssetsManifest(THEME, Object.assign({}, ...produced));
+    const entries = Object.assign({}, ...produced);
+
+    // The libraries the scripts and stylesheets imported, once each, now that
+    // they have all said which
+    Object.assign(entries, await buildVendors(THEME, entries));
+
+    await writeAssetsManifest(THEME, entries);
 
     log(`Done`);
     return true;

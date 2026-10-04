@@ -49,8 +49,11 @@
             $url     = {{theme_prefix}}_asset_url( $name );
             $version = {{theme_prefix}}_asset_version( $name );
 
+            // The libraries it imported, so they load with it and only once
+            $deps = {{theme_prefix}}_asset_deps( $name );
+
             if ( 'css' === $extension ) {
-                wp_register_style( $handle, $url, array(), $version );
+                wp_register_style( $handle, $url, $deps, $version );
 
                 // Lets WordPress inline a small stylesheet instead of serving
                 // it as a request of its own
@@ -62,7 +65,7 @@
             wp_register_script(
                 $handle,
                 $url,
-                'editor' === $variant ? $editor_deps : array(),
+                'editor' === $variant ? array_merge( $editor_deps, $deps ) : $deps,
                 $version,
                 true
             );

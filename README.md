@@ -71,10 +71,14 @@ file is a changed URL and no cache has to be flushed by hand.
 wp_enqueue_style(
     'theme-home-style',
     theme_asset_url( 'page.home.css' ),
-    array(),
+    theme_asset_deps( 'page.home.css' ),
     theme_asset_version( 'page.home.css' )
 );
 ```
+
+`theme_asset_deps()` returns the libraries that file imported, so they load
+before it (see *A third party library* below). Pass it even when the file
+imports none today: it costs nothing and keeps working the day it does.
 
 The names the build registers:
 
@@ -87,6 +91,8 @@ The names the build registers:
 | `block.<block>.css` | `blocks/<block>/style.styl` |
 | `block.<block>.editor.css` | `blocks/<block>/editor.styl` |
 | `block.<block>.editor.js` | `blocks/<block>/editor.js` |
+| `vendor.<library>.js` | a library from npm that your scripts import |
+| `vendor.<library>.css` | a library's CSS that your stylesheets `@import` |
 | `sprite.svg` | the SVG files in `assets/images/_sprites-svg/` |
 
 ### A stylesheet for one template
@@ -124,33 +130,61 @@ window.openMenu = function () { … };
 
 ### A third party library
 
-Install it and import it. No CDN, no copying files by hand:
+Install it and import it wherever you need it. No CDN, no copying files by
+hand:
 
 ```
 pnpm add swiper
 ```
 
 ```js
-// assets/javascript/compile/main.js
+// a template's script, a block's view.js, or compile/
 import Swiper from 'swiper';
-
-new Swiper('.slider', { loop: true });
+import { Navigation } from 'swiper/modules';
 ```
 
-Its CSS is imported from any `.styl`, and `node_modules` is already a lookup
-path:
-
 ```stylus
+// any .styl, partials included
 @import 'swiper/swiper-bundle.css'
 ```
 
-That inlines the library's CSS into the stylesheet doing the import, which is
-usually what you want: one request, and your own rules can come right after it.
+**A library is never copied into the file that imports it.** The build emits it
+once on its own — `assets/javascript/vendor/swiper.js` and
+`assets/css/vendor/swiper.css` — and notes in the manifest which files need it.
+Every path of a library the theme uses goes in the same file, so `swiper` and
+`swiper/modules` share one copy of what they have in common.
 
-To keep a library away from the pages that do not use it, import it from a file
-in `compile/pages/` rather than from `main.js`. It then travels inside that
-template's bundle and nowhere else. Two templates importing the same library
-get a copy each, which is the price of not shipping it to everyone.
+On the page, WordPress loads it before the files that need it and **only
+once**: a template and a block importing the same library on the same page get
+one copy between them. A page that uses neither does not load it at all.
+
+The import is plain JavaScript as you would write it anywhere; behind it the
+build turns it into a read of a global the library file sets. That is what
+lets it work in every browser, without import maps.
+
+Two more ways to reach a library, which mix freely with the above:
+
+- **Enqueue it by handle.** Each library is registered as
+  `<theme-slug>-vendor-<library>`, the same name for its script and its
+  stylesheet. A template can `wp_enqueue_script()` or `wp_enqueue_style()` it,
+  and a block can name it in its `block.json`. It is still the same file and
+  still loads once.
+- **Keep it inside the file that imports it**, the way bundlers usually work.
+  Worth it for something small that only one place uses and that does not
+  deserve a request of its own. List it in the project's `manifest.json`:
+
+  ```json
+  "bundle": [ "tiny-library" ]
+  ```
+
+The CSS of libraries is printed before the theme's own stylesheets, so your
+rules always come after it and can override it. Your own CSS is untouched by
+any of this: only an `@import` that points into `node_modules` is treated as a
+library.
+
+One case the build cannot see: a library you only ever enqueue from PHP, with
+no script or stylesheet importing it, is never emitted. Import it somewhere, or
+it does not exist.
 
 ### A block's assets
 
@@ -220,9 +254,10 @@ behaviour drops `viewScript` and ships no JavaScript at all. The reference
 Button block does exactly that: it declares no `editorStyle`, because it has no
 `editor.styl`.
 
-Those fields also accept a shared handle, which is how a block will later reach
-a third-party library registered once for the whole theme instead of carrying
-its own copy.
+A block rarely needs to name a library there: if its `view.js` or `style.styl`
+imports one, the build already made the library a dependency of that handle.
+The fields accept a library's handle as well, for a block that wants one
+without importing it.
 
 ## Layout of this repo
 
@@ -233,7 +268,7 @@ scripts/
   wizard.js            asks for the details and builds
   theme.js             compiles a generated theme in place
   create-block.js      scaffolds a block's folder
-  tasks/               copy, placeholders, textdomain, css, bundle, sprites, theme-json, assets
+  tasks/               copy, placeholders, textdomain, css, bundle, vendor, sprites, theme-json, assets
 src/
   .gitignore           the generated project's own gitignore
   package.json         the generated project's own package.json, with placeholders

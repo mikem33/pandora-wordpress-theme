@@ -1,6 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const { externals, vendorGlobal } = require('./vendor');
+
 const ROOT = path.join(__dirname, '..', '..');
 
 function log(message) {
@@ -12,33 +14,45 @@ function viteConfig(themeDir) {
   return path.join(themeDir, '..', '..', '..', 'vite.config.mjs');
 }
 
+// The npm packages a build imported, which the build left out of it
+function importedPackages(result) {
+  return [].concat(result)[0].output[0].imports;
+}
+
 // One Vite build per output file. IIFE cannot take several entries at once, and
 // the theme's scripts are plain scripts, not modules WordPress would load as
 // such.
 // outDir goes relative to root: Vite joins it to the root even when given an
 // absolute path
-async function bundleFile({ root, entry, outDir, fileName, name }) {
+//
+// Libraries from npm stay out: each is emitted once on its own, and the import
+// becomes a read of the global that file sets. Returns which ones it used.
+async function bundleFile({ root, entry, outDir, fileName, name, plugins = [] }) {
   const { build } = require('vite');
 
-  await build({
+  const result = await build({
     root,
     configFile: viteConfig(root),
     logLevel: 'warn',
+    plugins,
     build: {
       outDir,
       emptyOutDir: false,
       minify: true,
-      // No hashes yet: the PHP still enqueues these names
       rollupOptions: {
         input: entry,
+        external: await externals(root),
         output: {
           format: 'iife',
           name,
-          entryFileNames: fileName
+          entryFileNames: fileName,
+          globals: vendorGlobal
         }
       }
     }
   });
+
+  return importedPackages(result);
 }
 
 // Everything in compile/ is bundled together, in alphabetical order, the way the
@@ -76,34 +90,22 @@ async function bundleJavaScript(themeDir) {
 
   if (files.length === 0) return {};
 
-  const { build } = require('vite');
   const outDir = path.posix.join('assets', 'javascript');
 
   // rollupOptions rather than lib: a lib entry is resolved as a path before the
   // plugins run, so the virtual module never reaches them
-  await build({
+  const scripts = await bundleFile({
     root: themeDir,
-    configFile: viteConfig(themeDir),
-    logLevel: 'warn',
-    plugins: [entryPlugin(files)],
-    build: {
-      outDir,
-      emptyOutDir: false,
-      minify: true,
-      rollupOptions: {
-        input: 'virtual:theme-scripts',
-        output: {
-          format: 'iife',
-          name: 'theme',
-          entryFileNames: 'javascript.min.js'
-        }
-      }
-    }
+    entry: 'virtual:theme-scripts',
+    outDir,
+    fileName: 'javascript.min.js',
+    name: 'theme',
+    plugins: [entryPlugin(files)]
   });
 
   log(`Bundled ${files.length} file(s) → ${path.relative(ROOT, path.join(themeDir, outDir, 'javascript.min.js'))}`);
 
-  return { 'theme.js': path.posix.join(outDir, 'javascript.min.js') };
+  return { 'theme.js': { file: path.posix.join(outDir, 'javascript.min.js'), scripts } };
 }
 
 // A .js sitting in compile/pages/ is a script of its own, bundled to
@@ -122,7 +124,7 @@ async function bundlePageScripts(themeDir) {
 
     const name = file.replace(/\.js$/, '');
 
-    await bundleFile({
+    const scripts = await bundleFile({
       root: themeDir,
       entry: '/' + path.posix.join('assets', 'javascript', 'compile', 'pages', file),
       outDir,
@@ -132,7 +134,7 @@ async function bundlePageScripts(themeDir) {
 
     log(`Bundled ${path.relative(ROOT, path.join(pagesDir, file))} → ${path.relative(ROOT, path.join(themeDir, outDir, `${name}.js`))}`);
 
-    entries[`page.${name}.js`] = path.posix.join(outDir, `${name}.js`);
+    entries[`page.${name}.js`] = { file: path.posix.join(outDir, `${name}.js`), scripts };
   }
 
   return entries;
@@ -153,7 +155,7 @@ async function bundleBlockScripts(themeDir) {
       const file = path.join(blocksDir, entry.name, source);
       if (!await fs.pathExists(file)) continue;
 
-      await bundleFile({
+      const scripts = await bundleFile({
         root: themeDir,
         entry: '/' + path.posix.join('blocks', entry.name, source),
         outDir,
@@ -164,7 +166,7 @@ async function bundleBlockScripts(themeDir) {
       log(`Bundled ${path.relative(ROOT, file)} → ${path.relative(ROOT, path.join(themeDir, outDir, `${entry.name}${suffix}.js`))}`);
 
       const name = suffix ? `block.${entry.name}.view.js` : `block.${entry.name}.editor.js`;
-      entries[name] = path.posix.join(outDir, `${entry.name}${suffix}.js`);
+      entries[name] = { file: path.posix.join(outDir, `${entry.name}${suffix}.js`), scripts };
     }
   }
 
