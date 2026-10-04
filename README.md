@@ -155,9 +155,9 @@ get a copy each, which is the price of not shipping it to everyone.
 ### A block's assets
 
 See the Blocks section: a block's folder holds its `style.styl`, its
-`editor.js` and, if its interface needs it, an `editor.styl`. The build compiles
-them and the theme loads a block's CSS only on the pages where the block is
-used.
+`editor.js`, a `view.js` for the published page and, if its interface needs it,
+an `editor.styl`. The build compiles each one and registers it as a handle;
+which of them load is decided by the block's own `block.json`.
 
 ## Blocks
 
@@ -165,12 +165,13 @@ Each block lives in its own folder under the theme's `blocks/`:
 
 ```
 blocks/
-  editor.styl          editor-only styles, never served to the front
   button/
-    block.json         name, attributes, category
+    block.json         name, attributes, category, and which assets to load
     render.php         the front end markup
     editor.js          the editor controls
+    view.js            behaviour on the published page
     style.styl         its stylesheet
+    editor.styl        optional, styles for the editor interface only
 ```
 
 The theme registers whatever it finds there, so a block needs no wiring. To
@@ -181,8 +182,8 @@ pnpm create-block
 ```
 
 It asks for a title, a slug, an icon and a description, and writes the folder
-with the four files already filled in. It works both here and inside a
-generated project, where it uses that project's own slug.
+with its files already filled in, `block.json` included. It works both here and
+inside a generated project, where it uses that project's own slug.
 
 The icon is a [Dashicons](https://developer.wordpress.org/resource/dashicons/)
 name, which is the quickest way to get one. WordPress now draws its own block
@@ -194,11 +195,34 @@ The blocks are dynamic: the front end comes from `render.php`, so the markup
 stays in PHP with the theme's own classes, and the editor side is plain
 JavaScript. There is no JSX and nothing to compile for it.
 
-`style.styl` compiles to `assets/css/blocks/<block>.css` and is served only on
-the pages where the block is used. `editor.js` is minified to
-`assets/javascript/blocks/<block>.js`. A block's stylesheet can import
-`utilities/utilities`, which is how it reaches the same tokens as the rest of
-the theme.
+A block's stylesheet can import `utilities/utilities`, which is how it reaches
+the same tokens as the rest of the theme.
+
+### What a block loads, and when
+
+The build compiles each file and registers it as a handle. The `block.json`
+names the handles the block needs, and WordPress enqueues each one where that
+field means:
+
+| Field in `block.json` | Compiled from | Loaded |
+|---|---|---|
+| `style` | `style.styl` | the front end, only on pages where the block renders |
+| `editorStyle` | `editor.styl` | the editor only |
+| `editorScript` | `editor.js` | the editor only |
+| `viewScript` | `view.js` | the front end, only where the block renders |
+
+The handles follow one scheme, `<theme-slug>-block-<block>` with `-editor` or
+`-view` appended, and `pnpm create-block` writes them for you.
+
+**Leaving a field out is how a block says it needs no such asset.** Nothing is
+loaded by the mere fact that a file exists, so a block with no front-end
+behaviour drops `viewScript` and ships no JavaScript at all. The reference
+Button block does exactly that: it declares no `editorStyle`, because it has no
+`editor.styl`.
+
+Those fields also accept a shared handle, which is how a block will later reach
+a third-party library registered once for the whole theme instead of carrying
+its own copy.
 
 ## Layout of this repo
 
@@ -208,7 +232,8 @@ scripts/
   build.js             generates build/ from src/
   wizard.js            asks for the details and builds
   theme.js             compiles a generated theme in place
-  tasks/               copy, placeholders, textdomain, styles, scripts, sprites, theme-json
+  create-block.js      scaffolds a block's folder
+  tasks/               copy, placeholders, textdomain, css, bundle, sprites, theme-json, assets
 src/
   .gitignore           the generated project's own gitignore
   package.json         the generated project's own package.json, with placeholders
