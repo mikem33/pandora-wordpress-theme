@@ -14,7 +14,7 @@
      *     wp_enqueue_style(
      *         '{{theme_slug}}-home-style',
      *         {{theme_prefix}}_asset_url( 'page.home.css' ),
-     *         array(),
+     *         {{theme_prefix}}_asset_deps( 'page.home.css' ),
      *         {{theme_prefix}}_asset_version( 'page.home.css' ),
      *         'all'
      *     );

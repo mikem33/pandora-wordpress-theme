@@ -22,7 +22,7 @@
      *     wp_enqueue_script(
      *         '{{theme_slug}}-home-script',
      *         {{theme_prefix}}_asset_url( 'page.home.js' ),
-     *         array(),
+     *         {{theme_prefix}}_asset_deps( 'page.home.js' ),
      *         {{theme_prefix}}_asset_version( 'page.home.js' ),
      *         true
      *     );

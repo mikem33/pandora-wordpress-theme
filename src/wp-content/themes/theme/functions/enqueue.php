@@ -5,7 +5,7 @@
             wp_enqueue_style(
                 '{{theme_slug}}-style',
                 {{theme_prefix}}_asset_url( 'theme.css' ),
-                array(),
+                {{theme_prefix}}_asset_deps( 'theme.css' ),
                 {{theme_prefix}}_asset_version( 'theme.css' ),
                 'all'
             );
@@ -28,7 +28,7 @@
             wp_enqueue_script(
                 '{{theme_slug}}-javascript',
                 {{theme_prefix}}_asset_url( 'theme.js' ),
-                array(),
+                {{theme_prefix}}_asset_deps( 'theme.js' ),
                 {{theme_prefix}}_asset_version( 'theme.js' ),
                 true
             );
