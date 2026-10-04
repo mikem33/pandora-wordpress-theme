@@ -36,8 +36,17 @@ async function compileStylesheet(themeDir, entry, outDir, fileName) {
     logLevel: 'warn',
     css: {
       preprocessorOptions: {
-        // Lets a stylesheet inline a plain .css it imports
-        stylus: { 'include css': true }
+        // Keyed by file extension, styl, not by the preprocessor's name: with
+        // 'stylus' Vite silently ignores every option here
+        styl: {
+          // Lets a stylesheet inline a plain .css it imports, from the theme or
+          // from node_modules
+          'include css': true,
+          paths: [
+            path.join(themeDir, 'assets', 'css', 'styl'),
+            path.join(ROOT, 'node_modules')
+          ]
+        }
       }
     },
     build: {
