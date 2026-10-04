@@ -29,5 +29,8 @@
             "right"
         ]
     },
+    "style": "{{theme_slug}}-block-button",
+    "editorStyle": "{{theme_slug}}-block-button-editor",
+    "editorScript": "{{theme_slug}}-block-button-editor",
     "render": "file:./render.php"
 }
