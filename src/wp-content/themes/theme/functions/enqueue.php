@@ -1,12 +1,27 @@
 <?php
     function {{theme_prefix}}_scripts() {
-        global $release;
         // Set false if you want to load on the <head>.
         if (!is_admin()) {
-            wp_enqueue_style( '{{theme_prefix}}-style', get_stylesheet_uri(), array(), $release, 'all' );
+            wp_enqueue_style(
+                '{{theme_slug}}-style',
+                {{theme_prefix}}_asset_url( 'theme.css' ),
+                array(),
+                {{theme_prefix}}_asset_version( 'theme.css' ),
+                'all'
+            );
+
             include_once( get_stylesheet_directory() . '/includes/css-enqueue.php' );
+
             wp_deregister_script('jquery');
-            wp_enqueue_script( '{{theme_prefix}}-javascript', get_template_directory_uri() . '/assets/javascript/javascript.min.js', array(), $release, true );
+
+            wp_enqueue_script(
+                '{{theme_slug}}-javascript',
+                {{theme_prefix}}_asset_url( 'theme.js' ),
+                array(),
+                {{theme_prefix}}_asset_version( 'theme.js' ),
+                true
+            );
+
             if ( is_single() && get_option( 'thread_comments' ) ) { 
                 wp_enqueue_script( 'comment-reply' );
             }

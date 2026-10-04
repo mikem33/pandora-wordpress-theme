@@ -64,7 +64,7 @@ async function bundleJavaScript(themeDir) {
 
   if (!await fs.pathExists(compileDir)) {
     log(`No JavaScript to bundle`);
-    return;
+    return {};
   }
 
   const files = (await fs.readdir(compileDir))
@@ -74,7 +74,7 @@ async function bundleJavaScript(themeDir) {
     // the theme folder is here
     .map(file => '/' + path.posix.join('assets', 'javascript', 'compile', file));
 
-  if (files.length === 0) return;
+  if (files.length === 0) return {};
 
   const { build } = require('vite');
   const outDir = path.posix.join('assets', 'javascript');
@@ -102,17 +102,19 @@ async function bundleJavaScript(themeDir) {
   });
 
   log(`Bundled ${files.length} file(s) → ${path.relative(ROOT, path.join(themeDir, outDir, 'javascript.min.js'))}`);
+
+  return { 'theme.js': path.posix.join(outDir, 'javascript.min.js') };
 }
 
 async function bundleBlockScripts(themeDir) {
   const blocksDir = path.join(themeDir, 'blocks');
+  const entries = {};
 
-  if (!await fs.pathExists(blocksDir)) return;
+  if (!await fs.pathExists(blocksDir)) return entries;
 
-  const entries = await fs.readdir(blocksDir, { withFileTypes: true });
   const outDir = path.posix.join('assets', 'javascript', 'blocks');
 
-  for (const entry of entries) {
+  for (const entry of await fs.readdir(blocksDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
 
     for (const [source, suffix] of [['editor.js', ''], ['view.js', '-view']]) {
@@ -128,8 +130,13 @@ async function bundleBlockScripts(themeDir) {
       });
 
       log(`Bundled ${path.relative(ROOT, file)} → ${path.relative(ROOT, path.join(themeDir, outDir, `${entry.name}${suffix}.js`))}`);
+
+      const name = suffix ? `block.${entry.name}.view.js` : `block.${entry.name}.editor.js`;
+      entries[name] = path.posix.join(outDir, `${entry.name}${suffix}.js`);
     }
   }
+
+  return entries;
 }
 
 module.exports = {

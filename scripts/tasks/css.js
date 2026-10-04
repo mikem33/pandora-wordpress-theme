@@ -68,29 +68,39 @@ async function compileMainStyle(themeDir, theme) {
 
   await fs.writeFile(stylesheet, themeHeader(theme) + await fs.readFile(built, 'utf-8'), 'utf-8');
   await fs.remove(path.join(themeDir, staging));
+
+  return { 'theme.css': 'style.css' };
 }
 
 async function compilePageStyles(themeDir) {
   const pagesDir = path.join(themeDir, 'assets', 'css', 'styl', 'pages');
+  const entries = {};
 
-  if (!await fs.pathExists(pagesDir)) return;
+  if (!await fs.pathExists(pagesDir)) return entries;
 
   for (const file of (await fs.readdir(pagesDir)).sort()) {
     if (!file.endsWith('.styl')) continue;
+
+    const name = file.replace(/\.styl$/, '');
 
     await compileStylesheet(
       themeDir,
       '/' + path.posix.join('assets', 'css', 'styl', 'pages', file),
       path.posix.join('assets', 'css', 'pages'),
-      file.replace(/\.styl$/, '.css')
+      `${name}.css`
     );
+
+    entries[`page.${name}.css`] = path.posix.join('assets', 'css', 'pages', `${name}.css`);
   }
+
+  return entries;
 }
 
 async function compileBlockStyles(themeDir) {
   const blocksDir = path.join(themeDir, 'blocks');
+  const entries = {};
 
-  if (!await fs.pathExists(blocksDir)) return;
+  if (!await fs.pathExists(blocksDir)) return entries;
 
   const outDir = path.posix.join('assets', 'css', 'blocks');
 
@@ -107,15 +117,23 @@ async function compileBlockStyles(themeDir) {
         outDir,
         `${entry.name}${suffix}.css`
       );
+
+      const name = suffix ? `block.${entry.name}.editor.css` : `block.${entry.name}.css`;
+      entries[name] = path.posix.join(outDir, `${entry.name}${suffix}.css`);
     }
   }
+
+  return entries;
 }
 
 async function compileStyles(themeDir, theme) {
   log(`Compiling stylesheets`);
-  await compileMainStyle(themeDir, theme);
-  await compilePageStyles(themeDir);
-  await compileBlockStyles(themeDir);
+
+  return Object.assign(
+    await compileMainStyle(themeDir, theme),
+    await compilePageStyles(themeDir),
+    await compileBlockStyles(themeDir)
+  );
 }
 
 module.exports = {

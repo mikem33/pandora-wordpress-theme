@@ -8,9 +8,9 @@
             register_block_type( dirname( $block ) );
 
             $name  = basename( dirname( $block ) );
-            $style = '/assets/css/blocks/' . $name . '.css';
+            $style = 'block.' . $name . '.css';
 
-            if ( ! file_exists( get_stylesheet_directory() . $style ) ) {
+            if ( ! {{theme_prefix}}_asset_url( $style ) ) {
                 continue;
             }
 
@@ -18,9 +18,9 @@
             // where the block is used
             wp_enqueue_block_style( '{{theme_slug}}/' . $name, array(
                 'handle' => '{{theme_slug}}-block-' . $name,
-                'src'    => get_stylesheet_directory_uri() . $style,
-                'path'   => get_stylesheet_directory() . $style,
-                'ver'    => wp_get_theme()->get( 'Version' ),
+                'src'    => {{theme_prefix}}_asset_url( $style ),
+                'path'   => {{theme_prefix}}_asset_path( $style ),
+                'ver'    => {{theme_prefix}}_asset_version( $style ),
             ) );
         }
     }
@@ -32,27 +32,31 @@
      * script be plain JavaScript with no build step.
      */
     function {{theme_prefix}}_enqueue_block_editors() {
-        // Editor interface styles: the panels live outside the canvas iframe,
-        // so these go on the admin page rather than into the canvas
-        foreach ( glob( get_stylesheet_directory() . '/assets/css/blocks/*-editor.css' ) as $style ) {
-            $name = basename( $style, '.css' );
+        // Everything the build listed for a block's editor: the interface
+        // styles, whose panels live outside the canvas iframe, and the script
+        foreach ( {{theme_prefix}}_assets() as $name => $asset ) {
+            if ( ! preg_match( '/^block\.(.+)\.editor\.(css|js)$/', $name, $matches ) ) {
+                continue;
+            }
 
-            wp_enqueue_style(
-                '{{theme_slug}}-block-' . $name,
-                get_stylesheet_directory_uri() . '/assets/css/blocks/' . $name . '.css',
-                array(),
-                wp_get_theme()->get( 'Version' )
-            );
-        }
+            list( , $block, $extension ) = $matches;
 
-        foreach ( glob( get_stylesheet_directory() . '/assets/javascript/blocks/*.js' ) as $editor ) {
-            $name = basename( $editor, '.js' );
+            if ( 'css' === $extension ) {
+                wp_enqueue_style(
+                    '{{theme_slug}}-block-' . $block . '-editor',
+                    {{theme_prefix}}_asset_url( $name ),
+                    array(),
+                    {{theme_prefix}}_asset_version( $name )
+                );
+
+                continue;
+            }
 
             wp_enqueue_script(
-                '{{theme_slug}}-block-editor-' . $name,
-                get_stylesheet_directory_uri() . '/assets/javascript/blocks/' . $name . '.js',
+                '{{theme_slug}}-block-editor-' . $block,
+                {{theme_prefix}}_asset_url( $name ),
                 array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-components', 'wp-i18n' ),
-                wp_get_theme()->get( 'Version' ),
+                {{theme_prefix}}_asset_version( $name ),
                 true
             );
         }
@@ -74,18 +78,16 @@
         wp_register_style( '{{theme_slug}}-editor-canvas', false );
         wp_enqueue_style( '{{theme_slug}}-editor-canvas' );
 
-        foreach ( glob( get_stylesheet_directory() . '/assets/css/blocks/*.css' ) as $style ) {
-            $name = basename( $style, '.css' );
-
-            if ( str_ends_with( $name, '-editor' ) ) {
+        foreach ( {{theme_prefix}}_assets() as $name => $asset ) {
+            if ( ! preg_match( '/^block\.([^.]+)\.css$/', $name, $matches ) ) {
                 continue;
             }
 
             wp_enqueue_style(
-                '{{theme_slug}}-canvas-' . $name,
-                get_stylesheet_directory_uri() . '/assets/css/blocks/' . $name . '.css',
+                '{{theme_slug}}-canvas-' . $matches[1],
+                {{theme_prefix}}_asset_url( $name ),
                 array(),
-                wp_get_theme()->get( 'Version' )
+                {{theme_prefix}}_asset_version( $name )
             );
         }
 

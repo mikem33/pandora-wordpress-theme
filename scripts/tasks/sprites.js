@@ -31,7 +31,7 @@ async function compileSvgSprites(themeDir) {
 
   if (!await fs.pathExists(spritesDir)) {
     log(`No SVG sprites directory, skipping sprite generation`);
-    return;
+    return {};
   }
 
   const files = (await fs.readdir(spritesDir)).filter(file => file.endsWith('.svg')).sort();
@@ -51,13 +51,15 @@ async function compileSvgSprites(themeDir) {
 
   if (symbols.length === 0) {
     log(`No SVG sprites to compile`);
-    return;
+    return {};
   }
 
   const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${symbols.join('')}</svg>`;
 
   await fs.writeFile(outputFile, sprite, 'utf-8');
   log(`Compiled ${symbols.length} sprite(s) → ${path.relative(ROOT, outputFile)}`);
+
+  return { 'sprite.svg': path.posix.join('assets', 'images', 'sprite.svg') };
 }
 
 module.exports = {

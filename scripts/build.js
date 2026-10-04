@@ -16,6 +16,7 @@ const { compileStyles } = require('./tasks/css');
 const { bundleJavaScript, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
+const { writeAssetsManifest } = require('./tasks/assets');
 
 const ROOT = path.join(__dirname, '..');
 const BUILD = path.join(ROOT, 'build');
@@ -64,13 +65,17 @@ async function runBuild(theme = defaultTheme) {
     const themeDir = path.join(BUILD, 'wp-content', 'themes', theme.slug);
 
     // Run styles and scripts in parallel
-    await Promise.all([
+    const produced = await Promise.all([
       compileStyles(themeDir, theme),
       bundleJavaScript(themeDir),
       bundleBlockScripts(themeDir),
       compileSvgSprites(themeDir),
       generateThemeJson(themeDir)
     ]);
+
+    // What the PHP asks for by name, with a fingerprint so a changed file is a
+    // changed URL
+    await writeAssetsManifest(themeDir, Object.assign({}, ...produced));
 
     log(`Build completed successfully!`);
   } catch (err) {
