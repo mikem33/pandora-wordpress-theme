@@ -4,8 +4,8 @@ import fs from 'node:fs';
 /**
  * Shared Vite options for the theme's assets.
  *
- * The build tasks in scripts/ point at this file, and from the dev server it is
- * the config Vite reads on its own, so the options live in one place.
+ * The build tasks in scripts/ point at this file, so the options live in one
+ * place and a project can adjust them without touching the tasks.
  *
  * Note the preprocessor key: Vite keys these by file extension, styl, not by
  * the preprocessor's name. Under stylus every option here is silently dropped.
