@@ -113,7 +113,8 @@ async function compilePageStyles(themeDir) {
   if (!await fs.pathExists(pagesDir)) return entries;
 
   for (const file of (await fs.readdir(pagesDir)).sort()) {
-    if (!file.endsWith('.styl')) continue;
+    // Partials are imported by the pages, not pages of their own
+    if (!file.endsWith('.styl') || file.startsWith('_')) continue;
 
     const name = file.replace(/\.styl$/, '');
 
