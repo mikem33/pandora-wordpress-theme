@@ -70,6 +70,31 @@
     }
 
     /**
+     * A block's editorStyle, in the editor's own document rather than in the
+     * canvas.
+     *
+     * WordPress enqueues editorStyle inside the iframe, with the content. But
+     * what those stylesheets usually fix is the block's panels in the inspector
+     * sidebar, and the sidebar lives outside the iframe, so there they never
+     * arrive. enqueue_block_editor_assets is the hook for that document.
+     *
+     * The handles come from what each block.json declared, so dropping the
+     * field still means the stylesheet is not loaded.
+     */
+    function {{theme_prefix}}_enqueue_block_editor_styles() {
+        foreach ( WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type ) {
+            if ( 0 !== strpos( $block_type->name, '{{theme_slug}}/' ) ) {
+                continue;
+            }
+
+            foreach ( $block_type->editor_style_handles as $handle ) {
+                wp_enqueue_style( $handle );
+            }
+        }
+    }
+    add_action( 'enqueue_block_editor_assets', '{{theme_prefix}}_enqueue_block_editor_styles' );
+
+    /**
      * Styles the editor canvas. enqueue_block_assets is the hook that reaches
      * inside the editor iframe; enqueue_block_editor_assets stays outside it.
      *
