@@ -33,6 +33,8 @@
                 true
             );
 
+            include_once( get_stylesheet_directory() . '/includes/js-enqueue.php' );
+
             if ( is_single() && get_option( 'thread_comments' ) ) { 
                 wp_enqueue_script( 'comment-reply' );
             }
