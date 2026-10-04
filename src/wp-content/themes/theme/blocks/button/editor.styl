@@ -6,8 +6,12 @@
 
 \* ---------------------------- */
 
-// The URL field overflows its panel once it holds a full address
-.block-editor-url-input
+// WordPress gives the URL field a min-width of 300px and its suggestion list a
+// fixed 302px, both wider than the inspector sidebar, so the field overflows
+// the panel. Undoing it takes the min-width: a width alone loses to it.
+.block-editor-url-input,
+.components-popover .block-editor-url-input
+    min-width 0
     width 100%
 
     input[type="text"],
@@ -15,4 +19,5 @@
         width 100%
 
 .block-editor-url-input__suggestions
+    width 100%
     max-width 100%

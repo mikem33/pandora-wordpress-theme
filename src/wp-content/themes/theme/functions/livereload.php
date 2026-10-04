@@ -17,7 +17,12 @@
         <script>
             (function () {
                 var source = new EventSource('http://localhost:<?php echo $port; ?>/');
+
                 source.onmessage = function () { window.location.reload(); };
+
+                // A marker left behind by a watcher that died would have the
+                // browser retrying for ever, so the first failure ends it
+                source.onerror = function () { source.close(); };
             })();
         </script>
         <?php

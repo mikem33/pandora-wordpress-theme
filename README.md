@@ -60,20 +60,104 @@ The division of labour is deliberate: `theme.json` declares **what options
 exist**, because that is the only thing the editor cannot learn any other way,
 while **how things look** stays in the stylesheet.
 
-## Stylesheets for a single template
+## Assets: adding and loading them
 
-`style.css` is loaded on every page. Anything that belongs to one template only
-goes in `assets/css/styl/pages/`, compiles to `assets/css/pages/` and is
-enqueued from `includes/css-enqueue.php`, which ships with a commented example
-to copy:
+Everything compiled is listed by the build in `assets/assets.json`, with the
+path of each file and a fingerprint of its contents. The PHP asks for an asset
+by name and gets back its URL and that fingerprint as the version, so a changed
+file is a changed URL and no cache has to be flushed by hand.
 
 ```php
-if ( is_page_template( 'page-templates/template-home.php' ) ) {
-    wp_enqueue_style( 'theme-home-style', … );
-}
+wp_enqueue_style(
+    'theme-home-style',
+    theme_asset_url( 'page.home.css' ),
+    array(),
+    theme_asset_version( 'page.home.css' )
+);
 ```
 
-That way a landing page carries its own CSS and no other page pays for it.
+The names the build registers:
+
+| Name | Comes from |
+|---|---|
+| `theme.css` | `assets/css/styl/style.styl` |
+| `theme.js` | everything in `assets/javascript/compile/` |
+| `page.<name>.css` | `assets/css/styl/pages/<name>.styl` |
+| `page.<name>.js` | `assets/javascript/compile/pages/<name>.js` |
+| `block.<block>.css` | `blocks/<block>/style.styl` |
+| `block.<block>.editor.css` | `blocks/<block>/editor.styl` |
+| `block.<block>.editor.js` | `blocks/<block>/editor.js` |
+| `sprite.svg` | the SVG files in `assets/images/_sprites-svg/` |
+
+### A stylesheet for one template
+
+Drop a `.styl` in `assets/css/styl/pages/`. The build compiles it and lists it
+as `page.<name>.css`; `includes/css-enqueue.php` is where it gets enqueued, and
+it ships with the example commented out. Nothing else is needed: a page carries
+its own CSS and no other page pays for it.
+
+### A script for one template
+
+The same idea, in `assets/javascript/compile/pages/`. Each file there is
+bundled on its own into `assets/javascript/pages/` and listed as
+`page.<name>.js`; `includes/js-enqueue.php` is where it gets enqueued. The
+general bundle only reads the root of `compile/`, so nothing is loaded twice.
+
+That include runs after `theme.js` is enqueued, so a template's script can
+declare it as a dependency. The last argument of `wp_enqueue_script()` is
+`$in_footer`: the general bundle goes in the footer and so should anything
+non-essential, but a script that has to run before the page paints passes
+`false`.
+
+### Your own JavaScript
+
+Add a file to `assets/javascript/compile/`. Every file in that folder is bundled
+into `theme.js`, in alphabetical order.
+
+They are bundled, not concatenated, so each file has its own scope and anything
+no one uses is dropped. Whatever has to be reachable from the outside — an
+inline script, an attribute in the markup — goes on `window` on purpose:
+
+```js
+window.openMenu = function () { … };
+```
+
+### A third party library
+
+Install it and import it. No CDN, no copying files by hand:
+
+```
+pnpm add swiper
+```
+
+```js
+// assets/javascript/compile/main.js
+import Swiper from 'swiper';
+
+new Swiper('.slider', { loop: true });
+```
+
+Its CSS is imported from any `.styl`, and `node_modules` is already a lookup
+path:
+
+```stylus
+@import 'swiper/swiper-bundle.css'
+```
+
+That inlines the library's CSS into the stylesheet doing the import, which is
+usually what you want: one request, and your own rules can come right after it.
+
+To keep a library away from the pages that do not use it, import it from a file
+in `compile/pages/` rather than from `main.js`. It then travels inside that
+template's bundle and nowhere else. Two templates importing the same library
+get a copy each, which is the price of not shipping it to everyone.
+
+### A block's assets
+
+See the Blocks section: a block's folder holds its `style.styl`, its
+`editor.js`, a `view.js` for the published page and, if its interface needs it,
+an `editor.styl`. The build compiles each one and registers it as a handle;
+which of them load is decided by the block's own `block.json`.
 
 ## Blocks
 
@@ -81,12 +165,13 @@ Each block lives in its own folder under the theme's `blocks/`:
 
 ```
 blocks/
-  editor.styl          editor-only styles, never served to the front
   button/
-    block.json         name, attributes, category
+    block.json         name, attributes, category, and which assets to load
     render.php         the front end markup
     editor.js          the editor controls
+    view.js            behaviour on the published page
     style.styl         its stylesheet
+    editor.styl        optional, styles for the editor interface only
 ```
 
 The theme registers whatever it finds there, so a block needs no wiring. To
@@ -97,8 +182,8 @@ pnpm create-block
 ```
 
 It asks for a title, a slug, an icon and a description, and writes the folder
-with the four files already filled in. It works both here and inside a
-generated project, where it uses that project's own slug.
+with its files already filled in, `block.json` included. It works both here and
+inside a generated project, where it uses that project's own slug.
 
 The icon is a [Dashicons](https://developer.wordpress.org/resource/dashicons/)
 name, which is the quickest way to get one. WordPress now draws its own block
@@ -110,11 +195,34 @@ The blocks are dynamic: the front end comes from `render.php`, so the markup
 stays in PHP with the theme's own classes, and the editor side is plain
 JavaScript. There is no JSX and nothing to compile for it.
 
-`style.styl` compiles to `assets/css/blocks/<block>.css` and is served only on
-the pages where the block is used. `editor.js` is minified to
-`assets/javascript/blocks/<block>.js`. A block's stylesheet can import
-`utilities/utilities`, which is how it reaches the same tokens as the rest of
-the theme.
+A block's stylesheet can import `utilities/utilities`, which is how it reaches
+the same tokens as the rest of the theme.
+
+### What a block loads, and when
+
+The build compiles each file and registers it as a handle. The `block.json`
+names the handles the block needs, and WordPress enqueues each one where that
+field means:
+
+| Field in `block.json` | Compiled from | Loaded |
+|---|---|---|
+| `style` | `style.styl` | the front end, only on pages where the block renders |
+| `editorStyle` | `editor.styl` | the editor only |
+| `editorScript` | `editor.js` | the editor only |
+| `viewScript` | `view.js` | the front end, only where the block renders |
+
+The handles follow one scheme, `<theme-slug>-block-<block>` with `-editor` or
+`-view` appended, and `pnpm create-block` writes them for you.
+
+**Leaving a field out is how a block says it needs no such asset.** Nothing is
+loaded by the mere fact that a file exists, so a block with no front-end
+behaviour drops `viewScript` and ships no JavaScript at all. The reference
+Button block does exactly that: it declares no `editorStyle`, because it has no
+`editor.styl`.
+
+Those fields also accept a shared handle, which is how a block will later reach
+a third-party library registered once for the whole theme instead of carrying
+its own copy.
 
 ## Layout of this repo
 
@@ -124,7 +232,8 @@ scripts/
   build.js             generates build/ from src/
   wizard.js            asks for the details and builds
   theme.js             compiles a generated theme in place
-  tasks/               copy, placeholders, textdomain, styles, scripts, sprites, theme-json
+  create-block.js      scaffolds a block's folder
+  tasks/               copy, placeholders, textdomain, css, bundle, sprites, theme-json, assets
 src/
   .gitignore           the generated project's own gitignore
   package.json         the generated project's own package.json, with placeholders

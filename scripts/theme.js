@@ -11,10 +11,11 @@ const chokidar = require('chokidar');
 const manifest = require('../manifest.json');
 const theme = manifest.theme;
 
-const { compileStyles } = require('./tasks/styles');
-const { compileJavaScript, compileBlockScripts } = require('./tasks/scripts');
+const { compileStyles } = require('./tasks/css');
+const { bundleJavaScript, bundlePageScripts, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
+const { writeAssetsManifest } = require('./tasks/assets');
 
 const ROOT = path.join(__dirname, '..');
 const THEME = path.join(ROOT, 'wp-content', 'themes', theme.slug);
@@ -37,13 +38,18 @@ async function compileTheme() {
   try {
     log(`Compiling ${theme.name}`);
 
-    await Promise.all([
-      compileStyles(THEME),
-      compileJavaScript(THEME),
-      compileBlockScripts(THEME),
+    const produced = await Promise.all([
+      compileStyles(THEME, theme),
+      bundleJavaScript(THEME),
+      bundlePageScripts(THEME),
+      bundleBlockScripts(THEME),
       compileSvgSprites(THEME),
       generateThemeJson(THEME)
     ]);
+
+    // What the PHP asks for by name, with a fingerprint so a changed file is a
+    // changed URL
+    await writeAssetsManifest(THEME, Object.assign({}, ...produced));
 
     log(`Done`);
     return true;

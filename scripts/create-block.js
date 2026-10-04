@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// Scaffolds a block: asks for its details and writes the folder with the four
-// files already filled in. Works both here and inside a generated project.
+// Scaffolds a block: asks for its details and writes the folder with its files
+// already filled in. Works both here and inside a generated project.
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -25,6 +25,9 @@ async function ask(rl, label, fallback) {
   return answer.trim() || fallback;
 }
 
+// The asset fields name the handles the theme registers from the build's
+// manifest. Dropping one is how the block says it needs no such asset, so
+// there is no editorStyle here: this scaffold writes no editor.styl.
 function blockJson(namespace, slug, title, icon, description) {
   return {
     $schema: 'https://schemas.wp.org/trunk/block.json',
@@ -40,7 +43,10 @@ function blockJson(namespace, slug, title, icon, description) {
     },
     supports: {
       html: false
-    }
+    },
+    style: `${namespace}-block-${slug}`,
+    editorScript: `${namespace}-block-${slug}-editor`,
+    viewScript: `${namespace}-block-${slug}-view`
   };
 }
 
@@ -104,6 +110,26 @@ function editorJs(namespace, slug, title) {
 `;
 }
 
+function viewJs(slug, title) {
+  return `/**
+ * Front end of the ${title} block, on the published page. WordPress loads it
+ * only where the block renders, because block.json declares it as viewScript.
+ * Remove that field and this file stops being loaded.
+ */
+( function () {
+    var items = document.querySelectorAll( '.${slug}' );
+
+    if ( ! items.length ) {
+        return;
+    }
+
+    items.forEach( function ( item ) {
+        // The block's behaviour goes here
+    } );
+} )();
+`;
+}
+
 function styleStyl(slug, title) {
   return `/* ---------------------------- *\\
     
@@ -152,6 +178,7 @@ async function main() {
   await fs.writeJson(path.join(blockDir, 'block.json'), blockJson(namespace, slug, title, icon, description), { spaces: 4 });
   await fs.writeFile(path.join(blockDir, 'render.php'), renderPhp(slug, title), 'utf-8');
   await fs.writeFile(path.join(blockDir, 'editor.js'), editorJs(namespace, slug, title), 'utf-8');
+  await fs.writeFile(path.join(blockDir, 'view.js'), viewJs(slug, title), 'utf-8');
   await fs.writeFile(path.join(blockDir, 'style.styl'), styleStyl(slug, title), 'utf-8');
 
   console.log(`\nWritten to ${path.relative(ROOT, blockDir)}`);

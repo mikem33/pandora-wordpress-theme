@@ -1,5 +1,5 @@
 <?php
-    include_once(get_stylesheet_directory() .'/functions/global-variables.php');
+    include_once(get_stylesheet_directory() .'/functions/assets.php');
     include_once(get_stylesheet_directory() .'/functions/reset.php');
     include_once(get_stylesheet_directory() .'/functions/favicon.php');
     include_once(get_stylesheet_directory() .'/functions/enqueue.php');

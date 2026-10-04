@@ -4,67 +4,104 @@
      * new block needs no wiring beyond copying the folder.
      */
     function {{theme_prefix}}_register_blocks() {
+        {{theme_prefix}}_register_block_assets();
+
         foreach ( glob( get_stylesheet_directory() . '/blocks/*/block.json' ) as $block ) {
             register_block_type( dirname( $block ) );
-
-            $name  = basename( dirname( $block ) );
-            $style = '/assets/css/blocks/' . $name . '.css';
-
-            if ( ! file_exists( get_stylesheet_directory() . $style ) ) {
-                continue;
-            }
-
-            // Compiled away from the block, but still loaded only on the pages
-            // where the block is used
-            wp_enqueue_block_style( '{{theme_slug}}/' . $name, array(
-                'handle' => '{{theme_slug}}-block-' . $name,
-                'src'    => get_stylesheet_directory_uri() . $style,
-                'path'   => get_stylesheet_directory() . $style,
-                'ver'    => wp_get_theme()->get( 'Version' ),
-            ) );
         }
     }
     add_action( 'init', '{{theme_prefix}}_register_blocks' );
 
     /**
-     * Each block's editor script, enqueued with the WordPress packages it
-     * needs. Declaring them here rather than in block.json is what lets the
-     * script be plain JavaScript with no build step.
+     * The handle a block.json names for one of its assets. Scripts and styles
+     * are separate namespaces in WordPress, so the editor script and the editor
+     * stylesheet can share a name without colliding.
      */
-    function {{theme_prefix}}_enqueue_block_editors() {
-        // Editor interface styles: the panels live outside the canvas iframe,
-        // so these go on the admin page rather than into the canvas
-        foreach ( glob( get_stylesheet_directory() . '/assets/css/blocks/*-editor.css' ) as $style ) {
-            $name = basename( $style, '.css' );
+    function {{theme_prefix}}_block_handle( $block, $variant = '' ) {
+        return '{{theme_slug}}-block-' . $block . ( $variant ? '-' . $variant : '' );
+    }
 
-            wp_enqueue_style(
-                '{{theme_slug}}-block-' . $name,
-                get_stylesheet_directory_uri() . '/assets/css/blocks/' . $name . '.css',
-                array(),
-                wp_get_theme()->get( 'Version' )
-            );
-        }
+    /**
+     * Registers every block asset the build produced, so a block.json can name
+     * it and WordPress takes care of the rest:
+     *
+     *   style        the front end, only on the pages where the block renders
+     *   editorStyle  the editor only
+     *   editorScript the editor only
+     *   viewScript   the front end, only where the block renders
+     *
+     * Leaving a field out of block.json is how a block says it does not need
+     * that asset: nothing is enqueued by the mere fact that the file exists.
+     */
+    function {{theme_prefix}}_register_block_assets() {
+        // The editor script is plain JavaScript with no build step, so the
+        // WordPress packages it uses are declared here instead of bundled
+        $editor_deps = array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-components', 'wp-i18n' );
 
-        foreach ( glob( get_stylesheet_directory() . '/assets/javascript/blocks/*.js' ) as $editor ) {
-            $name = basename( $editor, '.js' );
+        foreach ( {{theme_prefix}}_assets() as $name => $asset ) {
+            if ( ! preg_match( '/^block\.([^.]+)\.(?:(editor|view)\.)?(css|js)$/', $name, $matches ) ) {
+                continue;
+            }
 
-            wp_enqueue_script(
-                '{{theme_slug}}-block-editor-' . $name,
-                get_stylesheet_directory_uri() . '/assets/javascript/blocks/' . $name . '.js',
-                array( 'wp-blocks', 'wp-block-editor', 'wp-element', 'wp-components', 'wp-i18n' ),
-                wp_get_theme()->get( 'Version' ),
+            list( , $block, $variant, $extension ) = $matches;
+
+            $handle  = {{theme_prefix}}_block_handle( $block, $variant );
+            $url     = {{theme_prefix}}_asset_url( $name );
+            $version = {{theme_prefix}}_asset_version( $name );
+
+            if ( 'css' === $extension ) {
+                wp_register_style( $handle, $url, array(), $version );
+
+                // Lets WordPress inline a small stylesheet instead of serving
+                // it as a request of its own
+                wp_style_add_data( $handle, 'path', {{theme_prefix}}_asset_path( $name ) );
+
+                continue;
+            }
+
+            wp_register_script(
+                $handle,
+                $url,
+                'editor' === $variant ? $editor_deps : array(),
+                $version,
                 true
             );
         }
     }
-    add_action( 'enqueue_block_editor_assets', '{{theme_prefix}}_enqueue_block_editors' );
+
+    /**
+     * A block's editorStyle, in the editor's own document rather than in the
+     * canvas.
+     *
+     * WordPress enqueues editorStyle inside the iframe, with the content. But
+     * what those stylesheets usually fix is the block's panels in the inspector
+     * sidebar, and the sidebar lives outside the iframe, so there they never
+     * arrive. enqueue_block_editor_assets is the hook for that document.
+     *
+     * The handles come from what each block.json declared, so dropping the
+     * field still means the stylesheet is not loaded.
+     */
+    function {{theme_prefix}}_enqueue_block_editor_styles() {
+        foreach ( WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type ) {
+            if ( 0 !== strpos( $block_type->name, '{{theme_slug}}/' ) ) {
+                continue;
+            }
+
+            foreach ( $block_type->editor_style_handles as $handle ) {
+                wp_enqueue_style( $handle );
+            }
+        }
+    }
+    add_action( 'enqueue_block_editor_assets', '{{theme_prefix}}_enqueue_block_editor_styles' );
 
     /**
      * Styles the editor canvas. enqueue_block_assets is the hook that reaches
      * inside the editor iframe; enqueue_block_editor_assets stays outside it.
      *
-     * The front end is left alone here: there each block's stylesheet is
-     * enqueued on render, so it only loads where the block is used.
+     * Every block's stylesheet goes in, not only the ones already on the page,
+     * so a block looks right the moment it is inserted. Only the handles a
+     * block.json actually declares are loaded, and WordPress prints each one
+     * once however many times it is enqueued.
      */
     function {{theme_prefix}}_editor_canvas_styles() {
         if ( ! is_admin() ) {
@@ -74,19 +111,14 @@
         wp_register_style( '{{theme_slug}}-editor-canvas', false );
         wp_enqueue_style( '{{theme_slug}}-editor-canvas' );
 
-        foreach ( glob( get_stylesheet_directory() . '/assets/css/blocks/*.css' ) as $style ) {
-            $name = basename( $style, '.css' );
-
-            if ( str_ends_with( $name, '-editor' ) ) {
+        foreach ( WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type ) {
+            if ( 0 !== strpos( $block_type->name, '{{theme_slug}}/' ) ) {
                 continue;
             }
 
-            wp_enqueue_style(
-                '{{theme_slug}}-canvas-' . $name,
-                get_stylesheet_directory_uri() . '/assets/css/blocks/' . $name . '.css',
-                array(),
-                wp_get_theme()->get( 'Version' )
-            );
+            foreach ( $block_type->style_handles as $handle ) {
+                wp_enqueue_style( $handle );
+            }
         }
 
         // Every page renders inside <main class="main h-space v-space">, so the

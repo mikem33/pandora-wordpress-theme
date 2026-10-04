@@ -10,6 +10,7 @@
 !scripts/
 !package.json
 !pnpm-lock.yaml
+!vite.config.mjs
 !manifest.json
 # track readme.md in the root (i.e. do NOT ignore it)
 !readme.md

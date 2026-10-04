@@ -42,16 +42,18 @@ async function writeManifest(theme) {
 const THEME_TOOLCHAIN = [
   'theme.js',
   'create-block.js',
-  path.join('tasks', 'styles.js'),
-  path.join('tasks', 'scripts.js'),
+  path.join('tasks', 'css.js'),
+  path.join('tasks', 'bundle.js'),
   path.join('tasks', 'sprites.js'),
-  path.join('tasks', 'theme-json.js')
+  path.join('tasks', 'theme-json.js'),
+  path.join('tasks', 'assets.js')
 ];
 
 async function copyDevelopmentFiles() {
   // These belong to the generated theme, not to this repo, so they come from src/
   await copyFile(path.join(SRC, '.gitignore'), path.join(BUILD, '.gitignore'));
   await copyFile(path.join(SRC, 'package.json'), path.join(BUILD, 'package.json'));
+  await copyFile(path.join(SRC, 'vite.config.mjs'), path.join(BUILD, 'vite.config.mjs'));
 
   for (const file of THEME_TOOLCHAIN) {
     await copyFile(path.join(ROOT, 'scripts', file), path.join(BUILD, 'scripts', file));

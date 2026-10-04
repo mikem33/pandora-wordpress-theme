@@ -8,8 +8,11 @@ rem($value)
     return unit($value/$fontSize, 'rem')
 
 // Fonts mixin
+// Relative to style.css, which sits at the theme root. Vite leaves it alone
+// because it cannot resolve it from the source file, which is what we want: the
+// fonts keep stable URLs instead of being copied and hashed per stylesheet.
 font-url($file)
-    return '../../assets/fonts/' + $file
+    return 'assets/fonts/' + $file
 
 webfont($family, $file, $weight = normal, $style = normal)
     @font-face
