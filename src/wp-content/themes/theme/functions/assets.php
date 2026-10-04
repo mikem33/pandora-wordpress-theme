@@ -106,4 +106,45 @@
     }
     add_action( 'init', '{{theme_prefix}}_register_vendors', 5 );
 
+    /**
+     * Libraries' stylesheets go first, so the theme's own rules always come
+     * after them and can override them.
+     *
+     * Without this a block could end up above the library it builds on.
+     * WordPress prints a classic theme's block styles late, when the block
+     * renders, and then moves them up into the head, ahead of the theme's
+     * stylesheets. If a template had already asked for the same library, its
+     * stylesheet was printed in the head, below the spot the block style is
+     * moved to.
+     */
+    function {{theme_prefix}}_vendor_styles_first() {
+        $styles  = wp_styles();
+        $prefix  = '{{theme_slug}}-vendor-';
+        $vendors = array();
+        $pending = $styles->queue;
+        $seen    = array();
+
+        while ( $pending ) {
+            $handle = array_shift( $pending );
+
+            if ( isset( $seen[ $handle ] ) ) {
+                continue;
+            }
+
+            $seen[ $handle ] = true;
+
+            if ( 0 === strpos( $handle, $prefix ) ) {
+                $vendors[] = $handle;
+            }
+
+            if ( isset( $styles->registered[ $handle ] ) ) {
+                $pending = array_merge( $pending, $styles->registered[ $handle ]->deps );
+            }
+        }
+
+        if ( $vendors ) {
+            $styles->queue = array_values( array_unique( array_merge( $vendors, $styles->queue ) ) );
+        }
+    }
+    add_action( 'wp_enqueue_scripts', '{{theme_prefix}}_vendor_styles_first', PHP_INT_MAX );
 ?>
