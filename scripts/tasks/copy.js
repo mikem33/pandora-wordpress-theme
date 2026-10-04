@@ -52,6 +52,7 @@ async function copyDevelopmentFiles() {
   // These belong to the generated theme, not to this repo, so they come from src/
   await copyFile(path.join(SRC, '.gitignore'), path.join(BUILD, '.gitignore'));
   await copyFile(path.join(SRC, 'package.json'), path.join(BUILD, 'package.json'));
+  await copyFile(path.join(SRC, 'vite.config.mjs'), path.join(BUILD, 'vite.config.mjs'));
 
   for (const file of THEME_TOOLCHAIN) {
     await copyFile(path.join(ROOT, 'scripts', file), path.join(BUILD, 'scripts', file));

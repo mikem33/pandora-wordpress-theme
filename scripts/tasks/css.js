@@ -7,6 +7,12 @@ function log(message) {
   console.log(`[BUILD] ${message}`);
 }
 
+// The project's own config: the Stylus options and the CSS target live there, so
+// a project can adjust them without touching these tasks
+function viteConfig(themeDir) {
+  return path.join(themeDir, '..', '..', '..', 'vite.config.mjs');
+}
+
 // WordPress identifies a theme by this comment, and a CSS minifier is free to
 // drop comments, so the build writes it instead of carrying it through Stylus.
 function themeHeader(theme) {
@@ -32,30 +38,12 @@ async function compileStylesheet(themeDir, entry, outDir, fileName) {
 
   await build({
     root: themeDir,
-    configFile: false,
+    configFile: viteConfig(themeDir),
     logLevel: 'warn',
-    css: {
-      preprocessorOptions: {
-        // Keyed by file extension, styl, not by the preprocessor's name: with
-        // 'stylus' Vite silently ignores every option here
-        styl: {
-          // Lets a stylesheet inline a plain .css it imports, from the theme or
-          // from node_modules
-          'include css': true,
-          paths: [
-            path.join(themeDir, 'assets', 'css', 'styl'),
-            path.join(ROOT, 'node_modules')
-          ]
-        }
-      }
-    },
     build: {
       outDir,
       emptyOutDir: false,
       cssMinify: true,
-      // Without this the minifier rewrites the media queries to range syntax
-      // (width>=75rem), which Safari below 16.4 ignores altogether
-      cssTarget: ['chrome90', 'firefox90', 'safari14'],
       rollupOptions: {
         input: entry,
         output: { assetFileNames: fileName }
@@ -66,12 +54,20 @@ async function compileStylesheet(themeDir, entry, outDir, fileName) {
   log(`Compiled ${entry.replace(/^\//, '')} → ${path.posix.join(outDir === '.' ? '' : outDir, fileName)}`);
 }
 
+// style.css has to sit at the theme root, which is where WordPress reads the
+// header from. Vite refuses to treat that as an output directory, and rightly
+// so: with emptyOutDir on it would wipe the theme. So it is built aside and
+// moved into place.
 async function compileMainStyle(themeDir, theme) {
-  await compileStylesheet(themeDir, '/assets/css/styl/style.styl', '.', 'style.css');
+  const staging = path.posix.join('assets', 'css', '.build');
 
+  await compileStylesheet(themeDir, '/assets/css/styl/style.styl', staging, 'style.css');
+
+  const built = path.join(themeDir, staging, 'style.css');
   const stylesheet = path.join(themeDir, 'style.css');
-  const css = await fs.readFile(stylesheet, 'utf-8');
-  await fs.writeFile(stylesheet, themeHeader(theme) + css, 'utf-8');
+
+  await fs.writeFile(stylesheet, themeHeader(theme) + await fs.readFile(built, 'utf-8'), 'utf-8');
+  await fs.remove(path.join(themeDir, staging));
 }
 
 async function compilePageStyles(themeDir) {

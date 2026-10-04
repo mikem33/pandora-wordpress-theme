@@ -7,6 +7,11 @@ function log(message) {
   console.log(`[BUILD] ${message}`);
 }
 
+// The project's own config, shared with the stylesheets and with the dev server
+function viteConfig(themeDir) {
+  return path.join(themeDir, '..', '..', '..', 'vite.config.mjs');
+}
+
 // One Vite build per output file. IIFE cannot take several entries at once, and
 // the theme's scripts are plain scripts, not modules WordPress would load as
 // such.
@@ -17,7 +22,7 @@ async function bundleFile({ root, entry, outDir, fileName, name }) {
 
   await build({
     root,
-    configFile: false,
+    configFile: viteConfig(root),
     logLevel: 'warn',
     build: {
       outDir,
@@ -78,7 +83,7 @@ async function bundleJavaScript(themeDir) {
   // plugins run, so the virtual module never reaches them
   await build({
     root: themeDir,
-    configFile: false,
+    configFile: viteConfig(themeDir),
     logLevel: 'warn',
     plugins: [entryPlugin(files)],
     build: {
