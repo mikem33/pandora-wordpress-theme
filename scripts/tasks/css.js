@@ -72,6 +72,31 @@ async function compileMainStyle(themeDir, theme) {
   return { 'theme.css': 'style.css' };
 }
 
+// A .styl sitting at the root of styl/ is a stylesheet of its own, compiled to
+// assets/css/. Partials start with an underscore and style.styl has its own
+// place, at the theme root.
+async function compileRootStyles(themeDir) {
+  const stylDir = path.join(themeDir, 'assets', 'css', 'styl');
+  const entries = {};
+
+  for (const file of (await fs.readdir(stylDir)).sort()) {
+    if (!file.endsWith('.styl') || file.startsWith('_') || file === 'style.styl') continue;
+
+    const name = file.replace(/\.styl$/, '');
+
+    await compileStylesheet(
+      themeDir,
+      '/' + path.posix.join('assets', 'css', 'styl', file),
+      path.posix.join('assets', 'css'),
+      `${name}.css`
+    );
+
+    entries[`${name}.css`] = path.posix.join('assets', 'css', `${name}.css`);
+  }
+
+  return entries;
+}
+
 async function compilePageStyles(themeDir) {
   const pagesDir = path.join(themeDir, 'assets', 'css', 'styl', 'pages');
   const entries = {};
@@ -131,6 +156,7 @@ async function compileStyles(themeDir, theme) {
 
   return Object.assign(
     await compileMainStyle(themeDir, theme),
+    await compileRootStyles(themeDir),
     await compilePageStyles(themeDir),
     await compileBlockStyles(themeDir)
   );

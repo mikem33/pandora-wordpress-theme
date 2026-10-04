@@ -10,6 +10,17 @@
                 'all'
             );
 
+            // Only downloaded when something is actually printed
+            if ( {{theme_prefix}}_asset_url( 'print.css' ) ) {
+                wp_enqueue_style(
+                    '{{theme_slug}}-print',
+                    {{theme_prefix}}_asset_url( 'print.css' ),
+                    array(),
+                    {{theme_prefix}}_asset_version( 'print.css' ),
+                    'print'
+                );
+            }
+
             include_once( get_stylesheet_directory() . '/includes/css-enqueue.php' );
 
             wp_deregister_script('jquery');
