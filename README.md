@@ -83,6 +83,7 @@ The names the build registers:
 | `theme.css` | `assets/css/styl/style.styl` |
 | `theme.js` | everything in `assets/javascript/compile/` |
 | `page.<name>.css` | `assets/css/styl/pages/<name>.styl` |
+| `page.<name>.js` | `assets/javascript/compile/pages/<name>.js` |
 | `block.<block>.css` | `blocks/<block>/style.styl` |
 | `block.<block>.editor.css` | `blocks/<block>/editor.styl` |
 | `block.<block>.editor.js` | `blocks/<block>/editor.js` |
@@ -94,6 +95,19 @@ Drop a `.styl` in `assets/css/styl/pages/`. The build compiles it and lists it
 as `page.<name>.css`; `includes/css-enqueue.php` is where it gets enqueued, and
 it ships with the example commented out. Nothing else is needed: a page carries
 its own CSS and no other page pays for it.
+
+### A script for one template
+
+The same idea, in `assets/javascript/compile/pages/`. Each file there is
+bundled on its own into `assets/javascript/pages/` and listed as
+`page.<name>.js`; `includes/js-enqueue.php` is where it gets enqueued. The
+general bundle only reads the root of `compile/`, so nothing is loaded twice.
+
+That include runs after `theme.js` is enqueued, so a template's script can
+declare it as a dependency. The last argument of `wp_enqueue_script()` is
+`$in_footer`: the general bundle goes in the footer and so should anything
+non-essential, but a script that has to run before the page paints passes
+`false`.
 
 ### Your own JavaScript
 
@@ -132,6 +146,11 @@ path:
 
 That inlines the library's CSS into the stylesheet doing the import, which is
 usually what you want: one request, and your own rules can come right after it.
+
+To keep a library away from the pages that do not use it, import it from a file
+in `compile/pages/` rather than from `main.js`. It then travels inside that
+template's bundle and nowhere else. Two templates importing the same library
+get a copy each, which is the price of not shipping it to everyone.
 
 ### A block's assets
 
