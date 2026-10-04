@@ -18,7 +18,7 @@
      * script that has to run before the page paints.
      *
      * Example:
-     * if ( is_page_template( 'page-templates/template-custom-blocks.php' ) ) {
+     * if ( is_page_template( 'page-templates/template-home.php' ) ) {
      *     wp_enqueue_script(
      *         '{{theme_slug}}-home-script',
      *         {{theme_prefix}}_asset_url( 'page.home.js' ),
