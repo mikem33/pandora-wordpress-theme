@@ -106,6 +106,38 @@ async function bundleJavaScript(themeDir) {
   return { 'theme.js': path.posix.join(outDir, 'javascript.min.js') };
 }
 
+// A .js sitting in compile/pages/ is a script of its own, bundled to
+// assets/javascript/pages/ and loaded only from the template that needs it. The
+// general bundle leaves them alone: it reads the files at the root of compile/.
+async function bundlePageScripts(themeDir) {
+  const pagesDir = path.join(themeDir, 'assets', 'javascript', 'compile', 'pages');
+  const entries = {};
+
+  if (!await fs.pathExists(pagesDir)) return entries;
+
+  const outDir = path.posix.join('assets', 'javascript', 'pages');
+
+  for (const file of (await fs.readdir(pagesDir)).sort()) {
+    if (!file.endsWith('.js')) continue;
+
+    const name = file.replace(/\.js$/, '');
+
+    await bundleFile({
+      root: themeDir,
+      entry: '/' + path.posix.join('assets', 'javascript', 'compile', 'pages', file),
+      outDir,
+      fileName: `${name}.js`,
+      name: `page_${name.replace(/-/g, '_')}`
+    });
+
+    log(`Bundled ${path.relative(ROOT, path.join(pagesDir, file))} → ${path.relative(ROOT, path.join(themeDir, outDir, `${name}.js`))}`);
+
+    entries[`page.${name}.js`] = path.posix.join(outDir, `${name}.js`);
+  }
+
+  return entries;
+}
+
 async function bundleBlockScripts(themeDir) {
   const blocksDir = path.join(themeDir, 'blocks');
   const entries = {};
@@ -141,5 +173,6 @@ async function bundleBlockScripts(themeDir) {
 
 module.exports = {
   bundleJavaScript,
+  bundlePageScripts,
   bundleBlockScripts
 };

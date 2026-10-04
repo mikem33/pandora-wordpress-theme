@@ -13,7 +13,7 @@ const { copyThemeFiles, writeManifest, copyDevelopmentFiles } = require('./tasks
 const { replacePlaceholders } = require('./tasks/placeholders');
 const { checkTextdomain } = require('./tasks/textdomain');
 const { compileStyles } = require('./tasks/css');
-const { bundleJavaScript, bundleBlockScripts } = require('./tasks/bundle');
+const { bundleJavaScript, bundlePageScripts, bundleBlockScripts } = require('./tasks/bundle');
 const { compileSvgSprites } = require('./tasks/sprites');
 const { generateThemeJson } = require('./tasks/theme-json');
 const { writeAssetsManifest } = require('./tasks/assets');
@@ -68,6 +68,7 @@ async function runBuild(theme = defaultTheme) {
     const produced = await Promise.all([
       compileStyles(themeDir, theme),
       bundleJavaScript(themeDir),
+      bundlePageScripts(themeDir),
       bundleBlockScripts(themeDir),
       compileSvgSprites(themeDir),
       generateThemeJson(themeDir)
