@@ -34,7 +34,7 @@ function themeHeader(theme) {
 // read relative to the root, which is the theme folder.
 //
 // No sourcemaps: Vite emits none for a CSS-only entry, neither as a file nor
-// inlined. They come back in development once the dev server serves the CSS.
+// inlined.
 //
 // Returns the library stylesheets it @imported, which are left out of it and
 // emitted once on their own. Stylus runs on the main thread for that: in a

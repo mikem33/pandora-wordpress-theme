@@ -9,7 +9,7 @@ function log(message) {
   console.log(`[BUILD] ${message}`);
 }
 
-// The project's own config, shared with the stylesheets and with the dev server
+// The project's own config, shared with the stylesheets
 function viteConfig(themeDir) {
   return path.join(themeDir, '..', '..', '..', 'vite.config.mjs');
 }
