@@ -60,20 +60,85 @@ The division of labour is deliberate: `theme.json` declares **what options
 exist**, because that is the only thing the editor cannot learn any other way,
 while **how things look** stays in the stylesheet.
 
-## Stylesheets for a single template
+## Assets: adding and loading them
 
-`style.css` is loaded on every page. Anything that belongs to one template only
-goes in `assets/css/styl/pages/`, compiles to `assets/css/pages/` and is
-enqueued from `includes/css-enqueue.php`, which ships with a commented example
-to copy:
+Everything compiled is listed by the build in `assets/assets.json`, with the
+path of each file and a fingerprint of its contents. The PHP asks for an asset
+by name and gets back its URL and that fingerprint as the version, so a changed
+file is a changed URL and no cache has to be flushed by hand.
 
 ```php
-if ( is_page_template( 'page-templates/template-home.php' ) ) {
-    wp_enqueue_style( 'theme-home-style', … );
-}
+wp_enqueue_style(
+    'theme-home-style',
+    theme_asset_url( 'page.home.css' ),
+    array(),
+    theme_asset_version( 'page.home.css' )
+);
 ```
 
-That way a landing page carries its own CSS and no other page pays for it.
+The names the build registers:
+
+| Name | Comes from |
+|---|---|
+| `theme.css` | `assets/css/styl/style.styl` |
+| `theme.js` | everything in `assets/javascript/compile/` |
+| `page.<name>.css` | `assets/css/styl/pages/<name>.styl` |
+| `block.<block>.css` | `blocks/<block>/style.styl` |
+| `block.<block>.editor.css` | `blocks/<block>/editor.styl` |
+| `block.<block>.editor.js` | `blocks/<block>/editor.js` |
+| `sprite.svg` | the SVG files in `assets/images/_sprites-svg/` |
+
+### A stylesheet for one template
+
+Drop a `.styl` in `assets/css/styl/pages/`. The build compiles it and lists it
+as `page.<name>.css`; `includes/css-enqueue.php` is where it gets enqueued, and
+it ships with the example commented out. Nothing else is needed: a page carries
+its own CSS and no other page pays for it.
+
+### Your own JavaScript
+
+Add a file to `assets/javascript/compile/`. Every file in that folder is bundled
+into `theme.js`, in alphabetical order.
+
+They are bundled, not concatenated, so each file has its own scope and anything
+no one uses is dropped. Whatever has to be reachable from the outside — an
+inline script, an attribute in the markup — goes on `window` on purpose:
+
+```js
+window.openMenu = function () { … };
+```
+
+### A third party library
+
+Install it and import it. No CDN, no copying files by hand:
+
+```
+pnpm add swiper
+```
+
+```js
+// assets/javascript/compile/main.js
+import Swiper from 'swiper';
+
+new Swiper('.slider', { loop: true });
+```
+
+Its CSS is imported from any `.styl`, and `node_modules` is already a lookup
+path:
+
+```stylus
+@import 'swiper/swiper-bundle.css'
+```
+
+That inlines the library's CSS into the stylesheet doing the import, which is
+usually what you want: one request, and your own rules can come right after it.
+
+### A block's assets
+
+See the Blocks section: a block's folder holds its `style.styl`, its
+`editor.js` and, if its interface needs it, an `editor.styl`. The build compiles
+them and the theme loads a block's CSS only on the pages where the block is
+used.
 
 ## Blocks
 
